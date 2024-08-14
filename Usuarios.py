@@ -11,23 +11,46 @@ class Usuario:
         self.__coord_x_2 = coordenada_x_2
         self.__coord_y_2 = coordenada_y_2
 
-    def inserir_usuario(self):
+    @property
+    def validation(self):
         banco = Banco()
 
         try:
             cursor = banco.get_banco.cursor()
-
-            cursor.execute("""insert into usuario (email, senha, x, y, x_2, y_2) values ('{}', '{}', '{}', '{}', '{}',
-            '{}')""".format(self.__email, self.__senha, self.__coord_x, self.__coord_y, self.__coord_x_2, self.__coord_y_2))
-
-            banco.get_banco.commit()
-            cursor.close()
-
-            return "Cadastro realizado com sucesso"
+            cadastros = int(list(cursor.execute("select count(id_user) from usuario"))[0][0])
         except:
-            return "Aconteceu algum erro no cadastro"
+            pass
+        else:
+            if cadastros != 0:
+                return True
+            elif cadastros <= 0:
+                return False
 
-    @classmethod
+    def insert_user(self):
+
+        banco = Banco()
+
+        validador = Usuario.validation
+
+        if validador:
+            return 'Usuario já cadastrado!'
+        else:
+            try:
+
+                cursor = banco.get_banco.cursor()
+
+                cursor.execute("""insert into usuario (email, senha, x, y, x_2, y_2) values ('{}', '{}', '{}', '{}', '{}',
+                '{}')""".format(self.__email, self.__senha, self.__coord_x, self.__coord_y, self.__coord_x_2, self.__coord_y_2))
+
+                banco.get_banco.commit()
+                cursor.close()
+
+                return "Cadastro realizado com sucesso"
+            except:
+                return "Aconteceu algum erro no cadastro"
+
+
+    @staticmethod
     def delete_user(self, email='', id=''):
         banco = Banco()
 
@@ -47,7 +70,8 @@ class Usuario:
         except:
             return 'Ocorreu um erro ao apagar o usuario!'
 
-    def select_user(self):
+    @staticmethod
+    def select_user(self, id):
         banco = Banco()
 
         try:
@@ -73,6 +97,8 @@ class Usuario:
         except:
             return 'Ocorreu um erro ao procurar o usuario!'
 
+
+    @staticmethod
     def update_user(self, email, senha, x, y, x2, y2):
         banco = Banco()
 
@@ -84,13 +110,15 @@ class Usuario:
             pass
 
 
-user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
-# user.inserir_usuario()
+# user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
+# user.insert_user()
 banco = Banco()
 cursor = banco.get_banco.cursor()
 
 # select = list(cursor.execute("select COUNT(ID_user) from usuario;"))[0][0]
 
-email, senha, x, y, x2, y2 = Usuario.select_user(id=2)
+# email, senha, x, y, x2, y2 = Usuario.select_user(id=1)
 
-print(email, senha, x, y, x2, y2)
+# print(email, senha, x, y, x2, y2)
+
+# teste
