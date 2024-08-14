@@ -105,4 +105,4 @@ cursor = banco.get_banco.cursor()
 
 # print(email, senha, x, y, x2, y2)
 
-
+# teste
