@@ -76,19 +76,35 @@ class Usuario:
 
         try:
             cursor = banco.get_banco.cursor()
-            dados = list(cursor.execute(f"select * from usuario where id_user = {id};"))[0]
-            dados = [dado for dado in dados]
-            dados.pop(0)
-            return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
+            quant_users = list(cursor.execute(f"select count(id_user) from usuario"))[0]
+            if quant_users == 0:
+                return 'Nenhum dado cadastrado!'
+            elif quant_users == 1:
+                dados = list(cursor.execute(f"select * from usuario"))[0]
+                dados = [dado for dado in dados]
+                dados.pop(0)
+                return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
+            else:
+                try:
+                    id = int(input('Digite o id: '))
+                except (ValueError, TypeError) as err:
+                    print('ID invalido!')
+                else:
+                    dados = cursor.execute(f"select * from usuario where id_user = {id};")[0]
+                    dados = [dado for dado in dados]
+                    dados.pop(0)
+                    return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
         except:
-            pass
+            return 'Ocorreu um erro ao procurar o usuario!'
+
 
     @staticmethod
-    def update_user(self):
+    def update_user(self, email, senha, x, y, x2, y2):
         banco = Banco()
 
         try:
             cursor = banco.get_banco.cursor()
+
 
         except:
             pass
