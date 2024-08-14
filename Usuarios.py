@@ -104,3 +104,5 @@ cursor = banco.get_banco.cursor()
 # email, senha, x, y, x2, y2 = Usuario.select_user(id=1)
 
 # print(email, senha, x, y, x2, y2)
+
+
