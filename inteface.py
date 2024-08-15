@@ -1,7 +1,8 @@
 import tkinter as tk
-from Usuarios import Usuario
+from Usuarios import User
 
-class inteface_principal:
+
+class Interface:
 
     def __init__(self, master=None):
         pass
