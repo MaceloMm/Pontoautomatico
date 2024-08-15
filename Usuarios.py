@@ -53,27 +53,22 @@ class User:
                 return "Aconteceu algum erro no cadastro"
 
     @staticmethod
-    def delete_user(self, email='', __id__=''):
+    def delete_user():
         __banco__ = Banco()
 
-        try:
-            __cursor__ = __banco__.get_banco.cursor()
+        validador = User.validation
 
-            if email != '':
-                __cursor__.execute(f"delete from usuario where email = '{email}';")
-                __banco__.get_banco.commit()
-                return 'Usuario exluido com sucesso'
-            elif id != '':
-                __cursor__.execute(f"delete from usuario where id = '{__id__}';")
-                __banco__.get_banco.commit()
-                return 'Usuario exluido com sucesso'
-            else:
-                return 'O usuario não foi encontrado'
-        except:
-            return 'Ocorreu um erro ao apagar o usuario!'
+        if validador:
+            try:
+                __cursor__ = __banco__.get_banco.cursor()
+                __cursor__.execute(f"""delete from usuario where id = {1};""")
+            except:
+                return 'Ocorreu um erro ao apagar o usuario!'
+        else:
+            return 'Nenhum Usuario cadastrado!'
 
     @staticmethod
-    def select_user(self, __id__):
+    def select_user():
         __cursor__ = Banco()
 
         try:
@@ -86,16 +81,26 @@ class User:
                 dados = [dado for dado in dados]
                 dados.pop(0)
                 return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
+            """
             else:
                 try:
-                    __id__ = int(input('Digite o id: '))
+                    credetials = list(__cursor__.execute("select id_user from usuario"))
                 except (ValueError, TypeError) as err:
                     print('ID invalido!')
                 else:
-                    dados = __cursor__.execute(f"select * from usuario where id_user = {__id__};")[0]
-                    dados = [dado for dado in dados]
-                    dados.pop(0)
-                    return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
+                    for credetial in credetials:
+                        if credetial == __id__:
+                            id_filtrado = __id__
+                            if id_filtrado != None:
+                                dados = __cursor__.execute(f"select * from usuario where id_user = {id_filtrado};")[0]
+                                dados = [dado for dado in dados]
+                                dados.pop(0)
+                                return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
+                            else:
+                                pass
+                        else:
+                            pass
+            """
         except:
             return 'Ocorreu um erro ao procurar o usuario!'
 
