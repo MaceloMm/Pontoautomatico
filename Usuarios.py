@@ -1,11 +1,14 @@
+# _*_ coding: utf-8 _*_
+
 from Banco import Banco
 
-class Usuario:
 
-    def __init__(self, email, senha, coordernada_x, coordenada_y, coordenada_x_2, coordenada_y_2, id=0):
-        self.__id = id
+class User:
+
+    def __init__(self, email, password, coordernada_x, coordenada_y, coordenada_x_2, coordenada_y_2, __id__=0):
+        self.__id = __id__
         self.__email = email
-        self.__senha = senha
+        self.__senha = password
         self.__coord_x = coordernada_x
         self.__coord_y = coordenada_y
         self.__coord_x_2 = coordenada_x_2
@@ -13,11 +16,11 @@ class Usuario:
 
     @property
     def validation(self):
-        banco = Banco()
+        __banco__ = Banco()
 
         try:
-            cursor = banco.get_banco.cursor()
-            cadastros = int(list(cursor.execute("select count(id_user) from usuario"))[0][0])
+            __cursor__ = __banco__.get_banco.cursor()
+            cadastros = int(list(__cursor__.execute("select count(id_user) from usuario"))[0][0])
         except:
             pass
         else:
@@ -28,82 +31,80 @@ class Usuario:
 
     def insert_user(self):
 
-        banco = Banco()
+        __banco__ = Banco()
 
-        validador = Usuario.validation
+        validador = User.validation
 
         if validador:
             return 'Usuario já cadastrado!'
         else:
             try:
 
-                cursor = banco.get_banco.cursor()
+                __cursor__ = __banco__.get_banco.cursor()
 
-                cursor.execute("""insert into usuario (email, senha, x, y, x_2, y_2) values ('{}', '{}', '{}', '{}', '{}',
+                __cursor__.execute("""insert into usuario (email, senha, x, y, x_2, y_2) values ('{}', '{}', '{}', '{}', '{}',
                 '{}')""".format(self.__email, self.__senha, self.__coord_x, self.__coord_y, self.__coord_x_2, self.__coord_y_2))
 
-                banco.get_banco.commit()
-                cursor.close()
+                __banco__.get_banco.commit()
+                __cursor__.close()
 
                 return "Cadastro realizado com sucesso"
             except:
                 return "Aconteceu algum erro no cadastro"
 
-
     @staticmethod
-    def delete_user(self, email='', id=''):
-        banco = Banco()
+    def delete_user(self, email='', __id__=''):
+        __banco__ = Banco()
 
         try:
-            cursor = banco.get_banco.cursor()
+            __cursor__ = __banco__.get_banco.cursor()
 
             if email != '':
-                cursor.execute(f"delete from usuario where email = '{email}';")
-                banco.get_banco.commit()
-                return ('Usuario exluido com sucesso')
+                __cursor__.execute(f"delete from usuario where email = '{email}';")
+                __banco__.get_banco.commit()
+                return 'Usuario exluido com sucesso'
             elif id != '':
-                cursor.execute(f"delete from usuario where id = '{id}';")
-                banco.get_banco.commit()
-                return ('Usuario exluido com sucesso')
+                __cursor__.execute(f"delete from usuario where id = '{__id__}';")
+                __banco__.get_banco.commit()
+                return 'Usuario exluido com sucesso'
             else:
                 return 'O usuario não foi encontrado'
         except:
             return 'Ocorreu um erro ao apagar o usuario!'
 
     @staticmethod
-    def select_user(self, id):
-        banco = Banco()
+    def select_user(self, __id__):
+        __cursor__ = Banco()
 
         try:
-            cursor = banco.get_banco.cursor()
-            quant_users = list(cursor.execute(f"select count(id_user) from usuario"))[0]
+            __cursor__ = __cursor__.get_banco.cursor()
+            quant_users = list(__cursor__.execute(f"select count(id_user) from usuario"))[0]
             if quant_users == 0:
                 return 'Nenhum dado cadastrado!'
             elif quant_users == 1:
-                dados = list(cursor.execute(f"select * from usuario"))[0]
+                dados = list(__cursor__.execute(f"select * from usuario"))[0]
                 dados = [dado for dado in dados]
                 dados.pop(0)
                 return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
             else:
                 try:
-                    id = int(input('Digite o id: '))
+                    __id__ = int(input('Digite o id: '))
                 except (ValueError, TypeError) as err:
                     print('ID invalido!')
                 else:
-                    dados = cursor.execute(f"select * from usuario where id_user = {id};")[0]
+                    dados = __cursor__.execute(f"select * from usuario where id_user = {__id__};")[0]
                     dados = [dado for dado in dados]
                     dados.pop(0)
                     return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
         except:
             return 'Ocorreu um erro ao procurar o usuario!'
 
-
     @staticmethod
-    def update_user(self, email, senha, x, y, x2, y2):
-        banco = Banco()
+    def update_user(self, email, password, x, y, x2, y2):
+        __banco__ = Banco()
 
         try:
-            cursor = banco.get_banco.cursor()
+            __cursor__ = banco.get_banco.cursor()
 
 
         except:
