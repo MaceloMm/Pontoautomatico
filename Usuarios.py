@@ -126,12 +126,5 @@ class User:
 
 # user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
 # user.insert_user()
-
-
 # select = list(cursor.execute("select COUNT(ID_user) from usuario;"))[0][0]
 
-# email, senha, x, y, x2, y2 = Usuario.select_user(id=1)
-
-# print(email, senha, x, y, x2, y2)
-
-# teste
