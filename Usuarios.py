@@ -121,7 +121,7 @@ class User:
             return 'Alteração realizada com Sucesso!'
 
         except:
-            pass
+            return 'Erro ao alterar o usuário!'
 
 
 # user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
