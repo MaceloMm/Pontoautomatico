@@ -13,7 +13,6 @@ class User:
         self.__coord_y = coordenada_y
         self.__coord_x_2 = coordenada_x_2
         self.__coord_y_2 = coordenada_y_2
-
     @property
     def validation(self):
         __banco__ = Banco()
