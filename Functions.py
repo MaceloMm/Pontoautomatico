@@ -44,7 +44,7 @@ def final(funcao):
     return cerebro
 
 @final
-def bater_ponto(nome=''):
+def bater_ponto(email='', __password__='', coodernadas=None):
     while True:
         try:
             keyboard.press('win')
@@ -87,6 +87,20 @@ def bater_ponto(nome=''):
                 file.write('Ocorreu um erro ao bater o ponto')
         else:
             break
+
+def cadastro():
+    servico = Service(ChromeDriverManager().install())
+    navegador = webdriver.Chrome(service=servico)
+    navegador.get('https://login.lg.com.br/login/bluke_edeploy')
+    time.sleep(3)
+    navegador.find_element('xpath', '//*[@id="Login"]').send_keys('macelo.matos@e-deploy.com.br')
+    navegador.find_element('xpath', '//*[@id="form0"]/div[3]/p/button').click()
+    time.sleep(1)
+    navegador.find_element('xpath', '//*[@id="Senha"]').send_keys('784512@Ma')
+    navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
+    time.sleep(8)
+    navegador.find_element('xpath',
+                           '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
 
 def __start_loop__(horaios):
     schedule.every().day.at("11:55").do(bater_ponto)
