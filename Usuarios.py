@@ -118,11 +118,11 @@ class User:
             __banco__.get_banco.commit()
             __banco__.get_banco.close()
             return 'Alteração realizada com Sucesso!'
-
         except:
             return 'Erro ao alterar o usuário!'
 
 
+# if __name__ == '__main__':
 # user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
 # user.insert_user()
 # select = list(cursor.execute("select COUNT(ID_user) from usuario;"))[0][0]

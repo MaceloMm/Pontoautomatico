@@ -10,6 +10,7 @@ import time
 import pyautogui
 import datetime
 import keyboard
+from tkinter import messagebox
 
 
 def final(funcao):
@@ -98,9 +99,10 @@ def cadastro(email='', senha=''):
     time.sleep(1)
     navegador.find_element('xpath', '//*[@id="Senha"]').send_keys(senha)
     navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
-    time.sleep(8)
-    navegador.find_element('xpath',
-                           '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+    time.sleep(5)
+    #navegador.find_element('xpath',
+    #                       '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+    messagebox.showinfo('Importante!', 'Clique em marcar')
 
 
 def __start_loop__(horaios):
