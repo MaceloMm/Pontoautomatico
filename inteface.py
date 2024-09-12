@@ -74,6 +74,7 @@ class FirstScreen(tk.Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
+
 class Cadastro(tk.Frame):
 
     def __init__(self, master):
@@ -119,13 +120,13 @@ class Cadastro(tk.Frame):
 
     @staticmethod
     def acabar(master, dado1, dado2, info):
-        teste1 = dado1.get()
-        teste2 = dado2.get()
-        if teste1 == '' and teste2 == '':
+        email = dado1.get()
+        senha = dado2.get()
+        if email == '' and senha == '':
             info.config(text='Os campos não foram preenchidos!', fg='red')
         else:
-            Functions.cadastro(email=teste1, senha=teste2)
-            info.config(text='Cadastrado!', fg='green')
+            msg = Functions.cadastro(email=email, senha=senha)
+            info.config(text=msg, fg='green')
 
 
 class Iniciar(tk.Frame):

@@ -13,8 +13,9 @@ class User:
         self.__coord_y = coordenada_y
         self.__coord_x_2 = coordenada_x_2
         self.__coord_y_2 = coordenada_y_2
-    @property
-    def validation(self):
+
+    @staticmethod
+    def validation():
         __banco__ = Banco()
 
         try:
@@ -32,7 +33,7 @@ class User:
 
         __banco__ = Banco()
 
-        validador = User.validation
+        validador = User.validation()
 
         if validador:
             return 'Usuario já cadastrado!'
@@ -55,7 +56,7 @@ class User:
     def delete_user():
         __banco__ = Banco()
 
-        validador = User.validation
+        validador = User.validation()
 
         if validador:
             try:
@@ -122,8 +123,14 @@ class User:
             return 'Erro ao alterar o usuário!'
 
 
-# if __name__ == '__main__':
-# user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
-# user.insert_user()
+class Horario:
+
+    def __init__(self, h1=None, h2=None, h3=None, h4=None):
+        self.__horarios = [h1, h2, h3, h4]
+
+
+if __name__ == '__main__':
+    user = User('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
+    user.insert_user()
 # select = list(cursor.execute("select COUNT(ID_user) from usuario;"))[0][0]
 

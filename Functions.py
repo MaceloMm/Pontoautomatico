@@ -11,6 +11,7 @@ import pyautogui
 import datetime
 import keyboard
 from tkinter import messagebox
+from Usuarios import User
 
 
 def final(funcao):
@@ -99,10 +100,24 @@ def cadastro(email='', senha=''):
     time.sleep(1)
     navegador.find_element('xpath', '//*[@id="Senha"]').send_keys(senha)
     navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
-    time.sleep(5)
-    #navegador.find_element('xpath',
-    #                       '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
-    messagebox.showinfo('Importante!', 'Clique em marcar')
+    time.sleep(10)
+    try:
+        navegador.find_element('xpath',
+                          '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+    except:
+        navegador.find_element('xpath',
+                               '//*[@id="app"]/div/section/section/div[1]/div'
+                               '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
+
+    messagebox.showinfo('Importante!', 'Deixei o mouse em cima de marcar ponto')
+    time.sleep(6)
+    positions = pyautogui.position()
+    messagebox.showinfo('Importante!', 'Agora clique em "Marca ponto" e deixe no botão verde')
+    time.sleep(6)
+    positions2 = pyautogui.position()
+    usuario = User(email, senha, positions[0], positions[1], positions2[0], positions2[1])
+    resultado = usuario.insert_user()
+    return resultado
 
 
 def __start_loop__(horaios):
@@ -116,3 +131,5 @@ def __start_loop__(horaios):
         time.sleep(1)
 
 
+if __name__ == '__main__':
+    cadastro('macelo.matos@e-deploy.com.br', '784512@Ma')

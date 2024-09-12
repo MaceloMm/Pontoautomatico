@@ -6,7 +6,7 @@ import sqlite3
 class Banco:
 
     def __init__(self):
-        self.__conexao = sqlite3.connect('banco_coodernadas.db')
+        self.__conexao = sqlite3.connect('cadastros.db')
         self.create_table()
 
     def create_table(self):
@@ -14,7 +14,7 @@ class Banco:
 
         cursor.execute("""
             create TABLE if not exists usuario (
-            ID_user integer primary key autoincrement,
+            id integer primary key autoincrement,
             email text,
             senha text,
             x integer,
@@ -23,9 +23,28 @@ class Banco:
             y_2 integer)
         """)
 
+        cursor.execute('PRAGMA foreign_keys = ON')
+
+        cursor.execute("""
+            CREATE TABLE if not exists horarios (
+            horario1 integer,
+            horario2 integer,
+            horario3 integer,
+            horario4 integer,
+            user_id integer,
+            FOREIGN KEY (user_id) REFERENCES usuario(id)
+            ON DELETE CASCADE
+            ON UPDATE NO ACTION
+            )
+        """)
+
         self.__conexao.commit()
         cursor.close()
 
     @property
     def get_banco(self):
         return self.__conexao
+
+
+if __name__ == '__main__':
+    banco = Banco()
