@@ -35,7 +35,8 @@ class Application(tk.Tk):
         self.destroy()
 
     def user_validation(self, info):
-        existe = User.validation
+        # existe = User.validation
+        existe = True
         if existe:
             self.show_frame(Iniciar)
         else:
@@ -64,6 +65,10 @@ class FirstScreen(tk.Frame):
         buttom_iniciar = tk.Button(self, text='Iniciar', width=13, height=2, font=font2,
                                    command= lambda: master.user_validation(label_info))
         buttom_iniciar.grid(column=1, row=1, pady=15)
+
+        buttom_horarios = tk.Button(self, text='Horarios',
+                                    command=lambda: master.show_frame(Horarios), width=13, height=2, font=font2)
+        buttom_horarios.grid(column=0, row=2, pady=5)
 
         # Ajuste a proporção das colunas para expandir conforme necessário
         self.grid_columnconfigure(0, weight=1)
@@ -125,8 +130,8 @@ class Cadastro(tk.Frame):
         if email == '' and senha == '':
             info.config(text='Os campos não foram preenchidos!', fg='red')
         else:
-            msg = Functions.cadastro(email=email, senha=senha)
-            info.config(text=msg, fg='green')
+            Functions.cadastro(email=email, senha=senha)
+            info.config(text='Cadastrado!', fg='green')
 
 
 class Iniciar(tk.Frame):
@@ -134,53 +139,49 @@ class Iniciar(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
+        font2 = tk.font.Font(weight='bold', size=9)
+
         texto_teste = tk.Label(self, text='Estou funcionando')
         texto_teste.grid(column=0, row=0, pady=15, columnspan=2, sticky='ew')
 
+        horario1 = tk.Label(self, text='Email:', font=font2)
+        horario1.grid(column=0, row=1, sticky='e', padx=5)
+        horario2 = tk.Label(self, text='Senha:', font=font2)
+        horario2.grid(column=0, row=2, pady=10, sticky='e', padx=5)
+        horario3 = tk.Label(self, text='Horario 03:', font=font2)
+        horario3.grid(column=0, row=3, pady=10, sticky='e')
+
         voltar = tk.Button(self, command=lambda: master.show_frame(FirstScreen), text='Voltar', width=10, height=1)
-        voltar.grid(column=1, row=3, padx=5, pady=12, columnspan=1, sticky='w')
+        voltar.grid(column=1, row=5, padx=5, pady=12, columnspan=1, sticky='w')
+
+        # Ajuste a proporção das colunas para expandir conforme necessário
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+
+        # Ajuste a proporção das linhas para expandir conforme necessário
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+        self.grid_rowconfigure(3, weight=1)
+
+
+class Horarios(tk.Frame):
+
+    def __init__(self, master):
+        super().__init__(master)
+
+        font = tk.font.Font(weight='bold', size=12)
+        font2 = tk.font.Font(weight='bold', size=9)
+
+        label_option = tk.Label(self, text='Escolha uma das opções abaixo:', font=font)
+        label_option.grid(column=0, row=0, columnspan=2, sticky='w', padx=10)
+
+        button_cadastro = tk.Button(self, text='Cadastro', width=10, height=2, font=font2)
+        button_cadastro.grid(column=0, row=1, pady=12)
 
 
 if __name__ == '__main__':
     root = Application()
     root.mainloop()
 
-"""
-def testando_texto():
-    text = label.get()
-    print(text)
-    return text
-
-root = tk.Tk()
-root.title('Teste')
-label = tk.Entry(root)
-label.pack(pady=10)
-label2 = tk.Button(root, text='clique aqui', command=testando_texto)
-label2.pack(pady=10)
-
-text = testando_texto()
-print(text)
-
-root.mainloop()
-"""
-"""
-layout = [
-    [sg.Text('Ponto Automatico', font=30)],
-    [sg.Button('Iniciar'), sg.Button('Cadastro')],
-    [sg.Text('Não iniciado!', key='mudanca')]
-]
-
-janela = sg.Window('Testando', layout)
-
-while True:
-    eventos, valores = janela.read()
-
-    if eventos == 'Cadastro':
-        janela['mudanca'].update('Rodando...')
-        Functions.cadastro()
-
-    if eventos == sg.WIN_CLOSED:
-        break
-
-janela.close()
-"""

@@ -22,7 +22,7 @@ class User:
             __cursor__ = __banco__.get_banco.cursor()
             cadastros = int(list(__cursor__.execute("select count(id_user) from usuario"))[0][0])
         except:
-            pass
+            print('dei um erro')
         else:
             if cadastros != 0:
                 return True
@@ -48,9 +48,9 @@ class User:
                 __banco__.get_banco.commit()
                 __banco__.get_banco.close()
 
-                return "Cadastro realizado com sucesso"
+                print("Cadastro realizado com sucesso")
             except:
-                return "Aconteceu algum erro no cadastro"
+                print("Aconteceu algum erro no cadastro")
 
     @staticmethod
     def delete_user():
@@ -122,15 +122,14 @@ class User:
         except:
             return 'Erro ao alterar o usuário!'
 
-
-class Horario:
-
-    def __init__(self, h1=None, h2=None, h3=None, h4=None):
-        self.__horarios = [h1, h2, h3, h4]
+    def user_consult(self):
+        print(self.__email, self.__senha, self.__coord_x, self.__coord_y, self.__coord_x_2, self.__coord_y_2)
 
 
 if __name__ == '__main__':
-    user = User('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
-    user.insert_user()
+    macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
+    macelo.insert_user()
+# user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
+# user.insert_user()
 # select = list(cursor.execute("select COUNT(ID_user) from usuario;"))[0][0]
 
