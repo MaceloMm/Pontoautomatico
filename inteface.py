@@ -130,8 +130,8 @@ class Cadastro(tk.Frame):
         if email == '' and senha == '':
             info.config(text='Os campos não foram preenchidos!', fg='red')
         else:
-            Functions.cadastro(email=email, senha=senha)
-            info.config(text='Cadastrado!', fg='green')
+            msg = Functions.cadastro(email=email, senha=senha)
+            info.config(text=msg, fg='green')
 
 
 class Iniciar(tk.Frame):
@@ -144,12 +144,7 @@ class Iniciar(tk.Frame):
         texto_teste = tk.Label(self, text='Estou funcionando')
         texto_teste.grid(column=0, row=0, pady=15, columnspan=2, sticky='ew')
 
-        horario1 = tk.Label(self, text='Email:', font=font2)
-        horario1.grid(column=0, row=1, sticky='e', padx=5)
-        horario2 = tk.Label(self, text='Senha:', font=font2)
-        horario2.grid(column=0, row=2, pady=10, sticky='e', padx=5)
-        horario3 = tk.Label(self, text='Horario 03:', font=font2)
-        horario3.grid(column=0, row=3, pady=10, sticky='e')
+        button_horarios = tk.Button(self, text='Horarios salvos', )
 
         voltar = tk.Button(self, command=lambda: master.show_frame(FirstScreen), text='Voltar', width=10, height=1)
         voltar.grid(column=1, row=5, padx=5, pady=12, columnspan=1, sticky='w')
@@ -175,10 +170,20 @@ class Horarios(tk.Frame):
         font2 = tk.font.Font(weight='bold', size=9)
 
         label_option = tk.Label(self, text='Escolha uma das opções abaixo:', font=font)
-        label_option.grid(column=0, row=0, columnspan=2, sticky='w', padx=10)
+        label_option.grid(column=0, row=0, columnspan=3, sticky='we', padx=10)
 
         button_cadastro = tk.Button(self, text='Cadastro', width=10, height=2, font=font2)
         button_cadastro.grid(column=0, row=1, pady=12)
+
+        button_alterar = tk.Button(self, text='Alterar', width=10, height=2, font=font2)
+        button_alterar.grid(column=1, row=1, pady=12)
+
+        button_deletar = tk.Button(self, text='Deletar', width=10, height=2, font=font2)
+        button_deletar.grid(column=2, row=1, pady=12)
+
+        button_voltar = tk.Button(self, text='Voltar', width=10, height=2, font=font2,
+                                  command=lambda: master.show_frame(FirstScreen))
+        button_voltar.grid(column=1, row=2, pady=5)
 
 
 if __name__ == '__main__':

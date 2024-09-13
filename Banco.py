@@ -27,10 +27,10 @@ class Banco:
 
         cursor.execute("""
             CREATE TABLE if not exists horarios (
-            horario1 integer,
-            horario2 integer,
-            horario3 integer,
-            horario4 integer,
+            horario1 text,
+            horario2 text,
+            horario3 text,
+            horario4 text,
             user_id integer,
             FOREIGN KEY (user_id) REFERENCES usuario(id)
             ON DELETE CASCADE
