@@ -106,6 +106,10 @@ class User:
         print(self.__email, self.__senha, self.__coord_x, self.__coord_y, self.__coord_x_2, self.__coord_y_2)
 
 
+class Horario:
+    def __init__(self, h1=None, h2=None, h3=None, h4=None):
+        self.__horarios = [h1, h2, h3, h4]
+
 if __name__ == '__main__':
     macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
     macelo.insert_user()
