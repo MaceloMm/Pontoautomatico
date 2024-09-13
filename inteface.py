@@ -23,6 +23,7 @@ class Application(tk.Tk):
 
         self.show_frame(FirstScreen)
 
+        # style = Style(theme='vapor')
         style = Style(theme='cyborg')
 
     def show_frame(self, frame_class):
@@ -53,10 +54,10 @@ class FirstScreen(tk.Frame):
         font2 = tk.font.Font(weight='bold', size=8)
 
         label = tk.Label(self, text='Escolha uma das opções:', font=font, )
-        label.grid(column=0, row=0, pady=15, columnspan=2)
+        label.grid(column=0, row=0, pady=15, columnspan=1)
 
         label_info = tk.Label(self, text='', font=font2)
-        label_info.grid(column=0, row=2, pady=10, columnspan=2)
+        label_info.grid(column=0, row=2, pady=10, columnspan=1)
 
         buttom_cadastro = tk.Button(self, text='Cadastro', command=lambda: master.show_frame(Cadastro),
                                     width=13, height=2, font=font2)
@@ -64,11 +65,11 @@ class FirstScreen(tk.Frame):
 
         buttom_iniciar = tk.Button(self, text='Iniciar', width=13, height=2, font=font2,
                                    command= lambda: master.user_validation(label_info))
-        buttom_iniciar.grid(column=1, row=1, pady=15)
+        buttom_iniciar.grid(column=0, row=2, pady=10)
 
         buttom_horarios = tk.Button(self, text='Horarios',
                                     command=lambda: master.show_frame(Horarios), width=13, height=2, font=font2)
-        buttom_horarios.grid(column=0, row=2, pady=5)
+        buttom_horarios.grid(column=0, row=3, pady=10)
 
         # Ajuste a proporção das colunas para expandir conforme necessário
         self.grid_columnconfigure(0, weight=1)
@@ -141,13 +142,20 @@ class Iniciar(tk.Frame):
 
         font2 = tk.font.Font(weight='bold', size=9)
 
-        texto_teste = tk.Label(self, text='Estou funcionando')
-        texto_teste.grid(column=0, row=0, pady=15, columnspan=2, sticky='ew')
+        texto_teste = tk.Label(self, text='Estou funcionando', font=10)
+        texto_teste.grid(column=0, row=0, pady=0, columnspan=2, sticky='w')
 
-        button_horarios = tk.Button(self, text='Horarios salvos', )
+        button_horarios = tk.Button(self, text='Horarios salvos', width=12, height=2,
+                                    font=font2)
+        button_horarios.grid(column=0, row=1, pady=10, padx=5, sticky='we', columnspan=2)
 
-        voltar = tk.Button(self, command=lambda: master.show_frame(FirstScreen), text='Voltar', width=10, height=1)
-        voltar.grid(column=1, row=5, padx=5, pady=12, columnspan=1, sticky='w')
+        button_horariosp = tk.Button(self, text='Definir horario', width=12, height=2,
+                                    font=font2)
+        button_horariosp.grid(column=0, row=2, pady=6, padx=5, sticky='we', columnspan=2)
+
+        voltar = tk.Button(self, command=lambda: master.show_frame(FirstScreen), text='Voltar', width=10, height=2,
+                           font=font2)
+        voltar.grid(column=0, row=5, padx=5, pady=6, columnspan=2, sticky='we')
 
         # Ajuste a proporção das colunas para expandir conforme necessário
         self.grid_columnconfigure(0, weight=1)

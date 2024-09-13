@@ -90,34 +90,41 @@ def bater_ponto(email='', __password__='', coodernadas=None):
         else:
             break
 
-def cadastro(email='', senha=''):
-    servico = Service(ChromeDriverManager().install())
-    navegador = webdriver.Chrome(service=servico)
-    navegador.get('https://login.lg.com.br/login/bluke_edeploy')
-    time.sleep(3)
-    navegador.find_element('xpath', '//*[@id="Login"]').send_keys(email)
-    navegador.find_element('xpath', '//*[@id="form0"]/div[3]/p/button').click()
-    time.sleep(1)
-    navegador.find_element('xpath', '//*[@id="Senha"]').send_keys(senha)
-    navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
-    time.sleep(10)
-    try:
-        navegador.find_element('xpath',
-                          '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
-    except:
-        navegador.find_element('xpath',
-                               '//*[@id="app"]/div/section/section/div[1]/div'
-                               '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
 
-    messagebox.showinfo('Importante!', 'Deixei o mouse em cima de marcar ponto')
-    time.sleep(6)
-    positions = pyautogui.position()
-    messagebox.showinfo('Importante!', 'Agora clique em "Marca ponto" e deixe no botão verde')
-    time.sleep(6)
-    positions2 = pyautogui.position()
-    usuario = User(email, senha, positions[0], positions[1], positions2[0], positions2[1])
-    resultado = usuario.insert_user()
-    return resultado
+def cadastro(email='', senha=''):
+    try:
+        servico = Service(ChromeDriverManager().install())
+        navegador = webdriver.Chrome(service=servico)
+        navegador.get('https://login.lg.com.br/login/bluke_edeploy')
+        time.sleep(3)
+        navegador.find_element('xpath', '//*[@id="Login"]').send_keys(email)
+        navegador.find_element('xpath', '//*[@id="form0"]/div[3]/p/button').click()
+        time.sleep(1)
+        navegador.find_element('xpath', '//*[@id="Senha"]').send_keys(senha)
+        navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
+        time.sleep(10)
+    except (ElementNotInteractableException, selenium.common.NoSuchWindowException,
+                selenium.common.exceptions.NoSuchWindowException) as err:
+        with open('log_ERRO.txt', 'a') as arquivo:
+            arquivo.write(f'ERROR: {err}\n')
+    else:
+        try:
+            navegador.find_element('xpath',
+                              '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+        except:
+            navegador.find_element('xpath',
+                                   '//*[@id="app"]/div/section/section/div[1]/div'
+                                   '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
+        else:
+            messagebox.showinfo('Importante!', 'Deixei o mouse em cima de marcar ponto')
+            time.sleep(6)
+            positions = pyautogui.position()
+            messagebox.showinfo('Importante!', 'Agora clique em "Marca ponto" e deixe no botão verde')
+            time.sleep(6)
+            positions2 = pyautogui.position()
+            usuario = User(email, senha, positions[0], positions[1], positions2[0], positions2[1])
+            resultado = usuario.insert_user()
+            return resultado
 
 
 def __start_loop__(horaios):
