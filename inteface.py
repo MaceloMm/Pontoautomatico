@@ -13,7 +13,7 @@ class Application(tk.Tk):
         super().__init__()
         self.title('Ponto Automatico')
         self.configure()
-        self.geometry("400x300")
+        self.geometry("600x450")
         self.attributes("-topmost", True)
 
         icone = tk.PhotoImage(file="imagens\\check.png")
@@ -25,6 +25,9 @@ class Application(tk.Tk):
 
         # style = Style(theme='vapor')
         style = Style(theme='cyborg')
+
+        texto_principal = tk.Label(self, text='Teste')
+        texto_principal.place(relx=0.1, rely=0.1, anchor='ne')
 
     def show_frame(self, frame_class):
         if self.current_frame is not None:
@@ -50,26 +53,26 @@ class FirstScreen(tk.Frame):
         super().__init__(master)
         self.configure()
 
-        font = tk.font.Font(weight='bold', size=15)
-        font2 = tk.font.Font(weight='bold', size=8)
+        font = tk.font.Font(weight='bold', size=13)
+        font2 = tk.font.Font(weight='bold', size=10)
 
         label = tk.Label(self, text='Escolha uma das opções:', font=font, )
-        label.grid(column=0, row=0, pady=15, columnspan=1)
+        label.grid(column=0, row=0, columnspan=1, pady=8, sticky='e')
 
         label_info = tk.Label(self, text='', font=font2)
         label_info.grid(column=0, row=2, pady=10, columnspan=1)
 
-        buttom_cadastro = tk.Button(self, text='Cadastro', command=lambda: master.show_frame(Cadastro),
-                                    width=13, height=2, font=font2)
-        buttom_cadastro.grid(column=0, row=1, pady=15)
+        buttom_cadastro = tk.Button(self, text='Cadastro usuario', command=lambda: master.show_frame(Cadastro),
+                                    width=20, height=2, font=font2)
+        buttom_cadastro.grid(column=0, row=2, pady=6)
 
-        buttom_iniciar = tk.Button(self, text='Iniciar', width=13, height=2, font=font2,
+        buttom_iniciar = tk.Button(self, text='Iniciar o programa', width=20, height=2, font=font2,
                                    command= lambda: master.user_validation(label_info))
-        buttom_iniciar.grid(column=0, row=2, pady=10)
+        buttom_iniciar.grid(column=0, row=1, pady=6)
 
-        buttom_horarios = tk.Button(self, text='Horarios',
-                                    command=lambda: master.show_frame(Horarios), width=13, height=2, font=font2)
-        buttom_horarios.grid(column=0, row=3, pady=10)
+        buttom_horarios = tk.Button(self, text='Cadastro de horarios',
+                                    command=lambda: master.show_frame(Horarios), width=20, height=2, font=font2)
+        buttom_horarios.grid(column=0, row=3, pady=6)
 
         # Ajuste a proporção das colunas para expandir conforme necessário
         self.grid_columnconfigure(0, weight=1)
@@ -82,6 +85,31 @@ class FirstScreen(tk.Frame):
 
 
 class Cadastro(tk.Frame):
+
+    def __init__(self, master):
+        super().__init__(master)
+
+        font = tk.font.Font(weight='bold', size=13)
+        font2 = tk.font.Font(weight='bold', size=10)
+
+        label_option = tk.Label(self, text='Escolha uma das opções abaixo:', font=font)
+        label_option.grid(column=0, row=0, columnspan=1, sticky='e', pady=12)
+
+        button_cadastro = tk.Button(self, text='Cadastro', width=14, height=2, font=font2)
+        button_cadastro.grid(column=0, row=1, pady=6)
+
+        button_alterar = tk.Button(self, text='Alterar', width=14, height=2, font=font2)
+        button_alterar.grid(column=0, row=2, pady=6)
+
+        button_deletar = tk.Button(self, text='Deletar', width=14, height=2, font=font2)
+        button_deletar.grid(column=0, row=3, pady=6)
+
+        button_voltar = tk.Button(self, text='Voltar', width=14, height=2, font=font2,
+                                  command=lambda: master.show_frame(FirstScreen))
+        button_voltar.grid(column=0, row=4, pady=6)
+
+
+class CadastroUser(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master=master)
@@ -140,7 +168,7 @@ class Iniciar(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font2 = tk.font.Font(weight='bold', size=9)
+        font2 = tk.font.Font(weight='bold', size=10)
 
         texto_teste = tk.Label(self, text='Estou funcionando', font=10)
         texto_teste.grid(column=0, row=0, pady=0, columnspan=2, sticky='w')
@@ -174,24 +202,24 @@ class Horarios(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font = tk.font.Font(weight='bold', size=12)
-        font2 = tk.font.Font(weight='bold', size=9)
+        font = tk.font.Font(weight='bold', size=13)
+        font2 = tk.font.Font(weight='bold', size=10)
 
         label_option = tk.Label(self, text='Escolha uma das opções abaixo:', font=font)
-        label_option.grid(column=0, row=0, columnspan=3, sticky='we', padx=10)
+        label_option.grid(column=0, row=0, columnspan=1, sticky='e', pady=12)
 
-        button_cadastro = tk.Button(self, text='Cadastro', width=10, height=2, font=font2)
-        button_cadastro.grid(column=0, row=1, pady=12)
+        button_cadastro = tk.Button(self, text='Cadastro', width=14, height=2, font=font2)
+        button_cadastro.grid(column=0, row=1, pady=6)
 
-        button_alterar = tk.Button(self, text='Alterar', width=10, height=2, font=font2)
-        button_alterar.grid(column=1, row=1, pady=12)
+        button_alterar = tk.Button(self, text='Alterar', width=14, height=2, font=font2)
+        button_alterar.grid(column=0, row=2, pady=6)
 
-        button_deletar = tk.Button(self, text='Deletar', width=10, height=2, font=font2)
-        button_deletar.grid(column=2, row=1, pady=12)
+        button_deletar = tk.Button(self, text='Deletar', width=14, height=2, font=font2)
+        button_deletar.grid(column=0, row=3, pady=6)
 
-        button_voltar = tk.Button(self, text='Voltar', width=10, height=2, font=font2,
+        button_voltar = tk.Button(self, text='Voltar', width=14, height=2, font=font2,
                                   command=lambda: master.show_frame(FirstScreen))
-        button_voltar.grid(column=1, row=2, pady=5)
+        button_voltar.grid(column=0, row=4, pady=6)
 
 
 if __name__ == '__main__':
