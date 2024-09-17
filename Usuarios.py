@@ -20,7 +20,8 @@ class User:
 
         try:
             __cursor__ = __banco__.get_banco.cursor()
-            cadastros = int(list(__cursor__.execute("select count(id_user) from usuario"))[0][0])
+            cadastros = int(list(__cursor__.execute("select count(id) from usuario"))[0][0])
+            print(cadastros)
         except:
             print('dei um erro')
         else:
@@ -64,10 +65,13 @@ class User:
             try:
                 __cursor__ = __banco__.get_banco.cursor()
                 __cursor__.execute(f"""delete from usuario where id = {1};""")
+                __cursor__.execute("""update sqlite_sequence SET seq = 0;""")
                 __banco__.get_banco.commit()
                 __banco__.get_banco.close()
             except:
                 return 'Ocorreu um erro ao apagar o usuario!'
+            else:
+                return 'Usuario deletado!'
         else:
             return 'Nenhum Usuario cadastrado!'
 
@@ -109,11 +113,11 @@ class User:
 
 
 class Horario:
-    def __init__(self, h1=None, h2=None, h3=None, h4=None):
-        self.__horarios = [h1, h2, h3, h4]
+    def __init__(self, hours):
+        self.__horarios = hours
 
     def quant_horarios(self):
-        quant = [horario for horario in self.__horarios if horario != None]
+        quant = [__horario__ for __horario__ in self.__horarios if __horario__ != None]
         return len(quant)
 
     def insert_horarios(self):
@@ -151,7 +155,6 @@ class Horario:
             return 'Ocorreu um erro ao cadastrar os horarios'
 
 
-
 if __name__ == '__main__':
     # macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
     # macelo.insert_user()
@@ -162,4 +165,3 @@ if __name__ == '__main__':
 # user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
 # user.insert_user()
 # select = list(cursor.execute("select COUNT(ID_user) from usuario;"))[0][0]
-

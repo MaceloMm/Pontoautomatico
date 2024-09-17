@@ -13,6 +13,8 @@ import keyboard
 from tkinter import messagebox
 from Usuarios import User
 
+ultimo_horario = True
+
 
 def final(funcao):
 
@@ -45,6 +47,7 @@ def final(funcao):
             funcao()
     return cerebro
 
+
 @final
 def bater_ponto(email='', __password__='', coodernadas=None):
     while True:
@@ -64,7 +67,8 @@ def bater_ponto(email='', __password__='', coodernadas=None):
             navegador.find_element('xpath', '//*[@id="Senha"]').send_keys('784512@Ma')
             navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
             time.sleep(15)
-            navegador.find_element('xpath', '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+            navegador.find_element('xpath',
+                                   '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
         except (ElementNotInteractableException, selenium.common.NoSuchWindowException) as err:
             with open('log.txt', 'a') as arquivo:
                 arquivo.write(f'ERROR: Ocorreu um ERRO!\n')
@@ -104,7 +108,7 @@ def cadastro(email='', senha=''):
         navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
         time.sleep(10)
     except (ElementNotInteractableException, selenium.common.NoSuchWindowException,
-                selenium.common.exceptions.NoSuchWindowException) as err:
+            selenium.common.exceptions.NoSuchWindowException) as err:
         with open('log_ERRO.txt', 'a') as arquivo:
             arquivo.write(f'ERROR: {err}\n')
     else:
@@ -115,16 +119,15 @@ def cadastro(email='', senha=''):
             navegador.find_element('xpath',
                                    '//*[@id="app"]/div/section/section/div[1]/div'
                                    '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
-        else:
-            messagebox.showinfo('Importante!', 'Deixei o mouse em cima de marcar ponto')
-            time.sleep(6)
-            positions = pyautogui.position()
-            messagebox.showinfo('Importante!', 'Agora clique em "Marca ponto" e deixe no botão verde')
-            time.sleep(6)
-            positions2 = pyautogui.position()
-            usuario = User(email, senha, positions[0], positions[1], positions2[0], positions2[1])
-            resultado = usuario.insert_user()
-            return resultado
+        messagebox.showinfo('Importante!', 'Deixei o mouse em cima de marcar ponto')
+        time.sleep(6)
+        positions = pyautogui.position()
+        messagebox.showinfo('Importante!', 'Agora clique em "Marca ponto" e deixe no botão verde')
+        time.sleep(6)
+        positions2 = pyautogui.position()
+        usuario = User(email, senha, positions[0], positions[1], positions2[0], positions2[1])
+        resultado = usuario.insert_user()
+        return resultado
 
 
 def __start_loop__(horaios):
@@ -138,5 +141,24 @@ def __start_loop__(horaios):
         time.sleep(1)
 
 
+def format_horarios(horario):
+    try:
+        hor_separate = horario.split(':')
+    except AttributeError:
+        return False
+    else:
+        if len(hor_separate[0]) == 2 and len(hor_separate[1]) == 2:
+            try:
+                first_num = int(hor_separate[0])
+                second_num = int(hor_separate[1])
+            except ValueError:
+                return False
+            else:
+                if type(first_num) == int and type(second_num) == int:
+                    return True
+        else:
+            return False
+
+
 if __name__ == '__main__':
-    cadastro('macelo.matos@e-deploy.com.br', '784512@Ma')
+    print(format_horarios('Ma:00'))
