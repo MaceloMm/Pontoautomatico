@@ -271,50 +271,49 @@ class HorariosCadastro(tk.Frame):
         label_horario1 = tk.Label(self, text='1º Horario:', font=font2)
         label_horario1.grid(column=0, row=1, padx=3, pady=8, sticky='w')
 
-        entry_horario1 = tk.Entry(self)
-        entry_horario1.grid(column=1, row=1, sticky='we', pady=8)
+        eh1 = tk.Entry(self)
+        eh1.grid(column=1, row=1, sticky='we', pady=8)
 
         label_horario2 = tk.Label(self, text='2° Horario:', font=font2)
         label_horario2.grid(column=0, row=2, padx=3, pady=8, sticky='w')
 
-        entry_horario2 = tk.Entry(self)
-        entry_horario2.grid(column=1, row=2, sticky='we', pady=8)
+        eh2 = tk.Entry(self)
+        eh2.grid(column=1, row=2, sticky='we', pady=8)
 
         label_horario3 = tk.Label(self, text='3° Horario:', font=font2)
         label_horario3.grid(column=0, row=3, padx=3, pady=8, sticky='w')
 
-        entry_horario3 = tk.Entry(self)
-        entry_horario3.grid(column=1, row=3, sticky='we', pady=8)
+        eh3 = tk.Entry(self)
+        eh3.grid(column=1, row=3, sticky='we', pady=8)
 
         label_horario4 = tk.Label(self, text='4° Horario:', font=font2)
         label_horario4.grid(column=0, row=4, padx=3, pady=8, sticky='w')
 
-        entry_horario4 = tk.Entry(self)
-        entry_horario4.grid(column=1, row=4, sticky='we', pady=8)
+        eh4 = tk.Entry(self)
+        eh4.grid(column=1, row=4, sticky='we', pady=8)
 
-        button_cadastrar = tk.Button(self, text='Enviar', width=15, height=1, font=font2,)
-                                     # command=lambda: HorariosCadastro.cadastrar_hors(list_hors, label_info, master))
+        button_cadastrar = tk.Button(self, text='Enviar', width=15, height=1, font=font2,
+                                     command=lambda: HorariosCadastro.cadastrar_hors(eh1, eh2, eh3, eh4, label_info, master))
         button_cadastrar.grid(column=0, row=5, sticky='w', pady=15)
 
         button_voltar = tk.Button(self, text='Voltar', width=15, height=1, font=font2,
                                   command=lambda: master.show_frame(Horarios))
         button_voltar.grid(column=1, row=5, sticky='w', pady=15)
 
-
-
     @staticmethod
-    def cadastrar_hors(list_hors, info, master):
-        print(list_hors)
-        if len(list_hors) <= 1:
-            info.config(text='Por favor insira pelo o menos 2 horarios', fg='red')
+    def cadastrar_hors(h1, h2, h3, h4, info, master):
+        hors = [h1.get(), h2.get(), h3.get(), h4.get()]
+        list_hors = [horario for horario in hors if horario is not None]
+        format_validation = [Functions.format_horarios(hora) for hora in list_hors]
+        if all(format_validation):
+            if len(list_hors) <= 1:
+                info.config(text='Por favor insira pelo o menos 2 horarios', fg='red')
+            else:
+                hor = Horario(list_hors)
+                msg = hor.insert_horarios()
+                info.config(text=msg, fg='green')
         else:
-            hor = Horario(list_hors)
-            msg = hor.insert_horarios()
-            info.config(text=msg, fg='green')
-            time.sleep(5)
-            Application.show_frame(master, Horarios)
-
-
+            info.config(text='Horaios não estão no formado 00:00', fg='red')
 
 
 if __name__ == '__main__':
