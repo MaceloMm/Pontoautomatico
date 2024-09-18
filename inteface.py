@@ -293,7 +293,8 @@ class HorariosCadastro(tk.Frame):
         eh4.grid(column=1, row=4, sticky='we', pady=8)
 
         button_cadastrar = tk.Button(self, text='Enviar', width=15, height=1, font=font2,
-                                     command=lambda: HorariosCadastro.cadastrar_hors(eh1, eh2, eh3, eh4, label_info, master))
+                                     command=lambda: HorariosCadastro.cadastrar_hors(eh1, eh2, eh3, eh4, label_info,
+                                                                                     master))
         button_cadastrar.grid(column=0, row=5, sticky='w', pady=15)
 
         button_voltar = tk.Button(self, text='Voltar', width=15, height=1, font=font2,

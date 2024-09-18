@@ -27,6 +27,7 @@ class Banco:
 
         cursor.execute("""
             CREATE TABLE if not exists horarios (
+            id integer primary key autoincrement,
             horario1 text,
             horario2 text,
             horario3 text,

@@ -21,7 +21,6 @@ class User:
         try:
             __cursor__ = __banco__.get_banco.cursor()
             cadastros = int(list(__cursor__.execute("select count(id) from usuario"))[0][0])
-            print(cadastros)
         except:
             print('dei um erro')
         else:
@@ -116,6 +115,21 @@ class Horario:
     def __init__(self, hours):
         self.__horarios = hours
 
+    @staticmethod
+    def validation_horarios():
+        __banco__ = Banco()
+
+        try:
+            __cursor__ = __banco__.get_banco.cursor()
+            cadastros = int(list(__cursor__.execute("select count(id) from horarios"))[0][0])
+        except:
+            print('dei um erro')
+        else:
+            if cadastros != 0:
+                return True
+            elif cadastros <= 0:
+                return False
+
     def quant_horarios(self):
         quant = [__horario__ for __horario__ in self.__horarios if __horario__ != None]
         return len(quant)
@@ -154,13 +168,29 @@ class Horario:
         except:
             return 'Ocorreu um erro ao cadastrar os horarios'
 
+    def delete_horarios(self):
+        __banco__ = Banco()
+        quant_hor = self.validation_horarios()
+
+        try:
+            __cursor__ = __banco__.get_banco.cursor()
+            if quant_hor > 1:
+                pass
+            else:
+                return 'Não existe horario cadastrado'
+        except:
+            return 'Ocorreu algum erro'
+
+
 
 if __name__ == '__main__':
     # macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
     # macelo.insert_user()
-    horario = Horario('12:00', '18:00', '19:00', '21:00')
-    msg = horario.insert_horarios()
-    print(msg)
+    horario = Horario(['12:00', '18:00', '19:00', '21:00'])
+    print(horario.delete_horarios())
+    #msg = horario.insert_horarios()
+    #print(msg)
+
 
 # user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
 # user.insert_user()
