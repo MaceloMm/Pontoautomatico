@@ -175,7 +175,11 @@ class Horario:
         try:
             __cursor__ = __banco__.get_banco.cursor()
             if quant_hor > 1:
-                pass
+                __cursor__ = __banco__.get_banco.cursor()
+                __cursor__.execute(f"""delete from horarios where id = {1};""")
+                __cursor__.execute("""update sqlite_sequence SET seq = 0;""")
+                __banco__.get_banco.commit()
+                __banco__.get_banco.close()
             else:
                 return 'Não existe horario cadastrado'
         except:
