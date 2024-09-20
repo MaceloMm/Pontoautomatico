@@ -11,6 +11,8 @@ import pyautogui
 import datetime
 import keyboard
 from tkinter import messagebox
+
+import Usuarios
 from Usuarios import User
 
 ultimo_horario = True
@@ -30,10 +32,10 @@ def final(funcao):
         keyboard.press('enter')
         keyboard.release('enter')
 
-    def cerebro():
+    def cerebro(__email__, __password__, cords1, cords2):
         if time.strftime("%H") == '20':
             global ultimo_horario
-            funcao()
+            funcao(__email__, __password__, cords1, cords2)
             time.sleep(4)
             whatsapp()
             time.sleep(1)
@@ -44,12 +46,14 @@ def final(funcao):
             pyautogui.click(x=378, y=917)
             ultimo_horario = False
         else:
-            funcao()
+            funcao(__email__, __password__, cords1, cords2)
     return cerebro
 
 
 @final
-def bater_ponto(email='', __password__='', coodernadas=None):
+def bater_ponto(__email__='', __password__='', cords1=None, cords2=None):
+    cords1 = cords1 or {'x': 0, 'y': 0}
+    cords2 = cords2 or {'x': 0, 'y': 0}
     while True:
         try:
             keyboard.press('win')
@@ -61,14 +65,19 @@ def bater_ponto(email='', __password__='', coodernadas=None):
             navegador = webdriver.Chrome(service=servico)
             navegador.get('https://login.lg.com.br/login/bluke_edeploy')
             time.sleep(3)
-            navegador.find_element('xpath', '//*[@id="Login"]').send_keys('macelo.matos@e-deploy.com.br')
+            navegador.find_element('xpath', '//*[@id="Login"]').send_keys(__email__)
             navegador.find_element('xpath', '//*[@id="form0"]/div[3]/p/button').click()
             time.sleep(1)
-            navegador.find_element('xpath', '//*[@id="Senha"]').send_keys('784512@Ma')
+            navegador.find_element('xpath', '//*[@id="Senha"]').send_keys(__password__)
             navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
             time.sleep(15)
-            navegador.find_element('xpath',
-                                   '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+            try:
+                navegador.find_element('xpath',
+                                       '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+            except:
+                navegador.find_element('xpath',
+                                       '//*[@id="app"]/div/section/section/div[1]/div'
+                                       '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
         except (ElementNotInteractableException, selenium.common.NoSuchWindowException) as err:
             with open('log.txt', 'a') as arquivo:
                 arquivo.write(f'ERROR: Ocorreu um ERRO!\n')
@@ -79,9 +88,9 @@ def bater_ponto(email='', __password__='', coodernadas=None):
     while True:
         try:
             time.sleep(15)
-            pyautogui.click(x=638, y=634)
+            pyautogui.click(x=cords1['x'], y=cords1['y'])
             time.sleep(3)
-            pyautogui.click(x=954, y=698)
+            pyautogui.moveTo(x=cords2['x'], y=cords2['y'])
             time.sleep(5)
             print(f'ponto batido com sucesso')
             with open('log.txt', 'a') as arquivo:
@@ -130,15 +139,42 @@ def cadastro(email='', senha=''):
         return resultado
 
 
-def __start_loop__(horaios):
-    schedule.every().day.at("11:55").do(bater_ponto)
-    schedule.every().day.at("18:02").do(bater_ponto)
-    schedule.every().day.at("19:02").do(bater_ponto)
-    schedule.every().day.at("20:58").do(bater_ponto)
+def __start_loop__(Utilizar=None):
+    # Pensar num jeito de fazer essa birosca que vc invetou funcioanar, cabeça de rola.
+    if Utilizar:
+        email, senha, cord1, cord2 = User.select_user()
+        horaios = Usuarios.Horario.select_horario()
 
-    while ultimo_horario:
-        schedule.run_pending()
-        time.sleep(1)
+        if len(horaios) == 2:
+            schedule.every().day.at(horaios[0]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(horaios[1]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+        elif len(horaios) == 3:
+            schedule.every().day.at(horaios[0]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(horaios[1]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(horaios[2]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+        elif len(horaios) == 4:
+            schedule.every().day.at(horaios[0]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(horaios[1]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(horaios[2]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(horaios[3]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+        else:
+            return 'Não existe horarios validos cadastrados'
+        while ultimo_horario:
+            schedule.run_pending()
+            time.sleep(1)
+    else:
+        # Programar essa parte depois cabeça de pika
+        pass
+
 
 
 def format_horarios(horario):
@@ -161,4 +197,4 @@ def format_horarios(horario):
 
 
 if __name__ == '__main__':
-    print(format_horarios('Ma:00'))
+    __start_loop__()

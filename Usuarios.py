@@ -64,7 +64,7 @@ class User:
             try:
                 __cursor__ = __banco__.get_banco.cursor()
                 __cursor__.execute(f"""delete from usuario where id = {1};""")
-                __cursor__.execute("""update sqlite_sequence SET seq = 0;""")
+                __cursor__.execute("""update sqlite_sequence SET seq = 0 where name = 'usuario';""")
                 __banco__.get_banco.commit()
                 __banco__.get_banco.close()
             except:
@@ -77,18 +77,17 @@ class User:
     @staticmethod
     def select_user():
         __banco__ = Banco()
+        validador = User.validation()
 
         try:
             __cursor__ = __banco__.get_banco.cursor()
-            quant_users = list(__cursor__.execute(f"select count(id_user) from usuario"))[0]
-            __banco__.get_banco.close()
-            if quant_users == 0:
+            if validador:
+                dados = list(__cursor__.execute(f"SELECT * FROM usuario;"))[0]
+                dados = [dado for dado in dados if dado != 1]
+                __banco__.get_banco.close()
+                return dados[0], dados[1], {'x': dados[2], 'y': dados[3]}, {'x': dados[4], 'y': dados[5]}
+            else:
                 return 'Nenhum dado cadastrado!'
-            elif quant_users == 1:
-                dados = list(__cursor__.execute(f"select * from usuario"))[0]
-                dados = [dado for dado in dados]
-                dados.pop(0)
-                return dados[0], dados[1], dados[2], dados[3], dados[4], dados[5]
         except:
             return 'Ocorreu um erro ao procurar o usuario!'
 
@@ -121,7 +120,8 @@ class Horario:
 
         try:
             __cursor__ = __banco__.get_banco.cursor()
-            cadastros = int(list(__cursor__.execute("select count(id) from horarios"))[0][0])
+            cadastros = len(list(__cursor__.execute("""select horario1, horario2, horario3, horario4 from horarios 
+                                                    where id = 1; """))[0])
         except:
             print('dei um erro')
         else:
@@ -131,71 +131,93 @@ class Horario:
                 return False
 
     def quant_horarios(self):
-        quant = [__horario__ for __horario__ in self.__horarios if __horario__ != None]
+        quant = [__horario__ for __horario__ in self.__horarios if __horario__ is not None]
         return len(quant)
 
     def insert_horarios(self):
         __banco__ = Banco()
         quant_hor = self.quant_horarios()
+        validacao = self.validation_horarios()
 
         try:
             __cursor__ = __banco__.get_banco.cursor()
-            if quant_hor >= 1:
-                if quant_hor == 2:
-                    __cursor__.execute("""
-                    INSERT into horarios (horario1, horario2) values (?, ?)
-                    """, (self.__horarios[0], self.__horarios[1]))
-                    __banco__.get_banco.commit()
-                    __banco__.get_banco.close()
-                    return f'Cadastrado os {quant_hor} horarios'
-                elif quant_hor == 3:
-                    __cursor__.execute("""
-                    INSERT into horarios (horario1, horario2, horario3) values (?, ?, ?)
-                    """, (self.__horarios[0], self.__horarios[1], self.__horarios[2]))
-                    __banco__.get_banco.commit()
-                    __banco__.get_banco.close()
-                    return f'Cadastrado os {quant_hor} horarios'
-                elif quant_hor == 4:
-                    __cursor__.execute("""
-                    INSERT into horarios (horario1, horario2, horario3, horario4) values 
-                    (?, ?, ?, ?);
-                    """, (self.__horarios[0], self.__horarios[1], self.__horarios[2], self.__horarios[3]))
-                    __banco__.get_banco.commit()
-                    __banco__.get_banco.close()
-                    return f'Cadastrado os {quant_hor} horarios'
+            if validacao:
+                return 'Já existe um horario cadastrado'
             else:
-                return 'Precisa cadastrar mais que um horario'
+                if quant_hor >= 1:
+                    if quant_hor == 2:
+                        __cursor__.execute("""
+                        INSERT into horarios (horario1, horario2) values (?, ?)
+                        """, (self.__horarios[0], self.__horarios[1]))
+                        __banco__.get_banco.commit()
+                        __banco__.get_banco.close()
+                        return f'Cadastrado os {quant_hor} horarios'
+                    elif quant_hor == 3:
+                        __cursor__.execute("""
+                        INSERT into horarios (horario1, horario2, horario3) values (?, ?, ?)
+                        """, (self.__horarios[0], self.__horarios[1], self.__horarios[2]))
+                        __banco__.get_banco.commit()
+                        __banco__.get_banco.close()
+                        return f'Cadastrado os {quant_hor} horarios'
+                    elif quant_hor == 4:
+                        __cursor__.execute("""
+                        INSERT into horarios (horario1, horario2, horario3, horario4) values 
+                        (?, ?, ?, ?);
+                        """, (self.__horarios[0], self.__horarios[1], self.__horarios[2], self.__horarios[3]))
+                        __banco__.get_banco.commit()
+                        __banco__.get_banco.close()
+                        return f'Cadastrado os {quant_hor} horarios'
+                else:
+                    return 'Precisa cadastrar mais que um horario'
         except:
             return 'Ocorreu um erro ao cadastrar os horarios'
 
-    def delete_horarios(self):
+    @staticmethod
+    def delete_horarios():
         __banco__ = Banco()
-        quant_hor = self.validation_horarios()
+        validador = Horario.validation_horarios()
 
         try:
             __cursor__ = __banco__.get_banco.cursor()
-            if quant_hor > 1:
+            if validador:
                 __cursor__ = __banco__.get_banco.cursor()
                 __cursor__.execute(f"""delete from horarios where id = {1};""")
-                __cursor__.execute("""update sqlite_sequence SET seq = 0;""")
+                __cursor__.execute("""update sqlite_sequence SET seq = 0 where name = 'horarios';""")
                 __banco__.get_banco.commit()
                 __banco__.get_banco.close()
+                return 'Horario deletado com sucesso!'
             else:
                 return 'Não existe horario cadastrado'
         except:
             return 'Ocorreu algum erro'
 
+    @staticmethod
+    def select_horario():
+        __banco__ = Banco()
+        validacao = Horario.validation_horarios()
 
+        try:
+            if validacao:
+                __cursor__ = __banco__.get_banco.cursor()
+                hor_cadastros = list(__cursor__.execute("""
+                SELECT horario1, horario2, horario3, horario4 from horarios"""))[0]
+                hor_cadastros = [hor for hor in hor_cadastros]
+                __banco__.get_banco.close()
+                return hor_cadastros
+            else:
+                return 'Não existe horarios cadastrados!'
+        except:
+            return 'Ocorreu um erro ao retorna os cadastros'
 
 if __name__ == '__main__':
-    # macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
-    # macelo.insert_user()
+    pass
+    #macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
+    #macelo.insert_user()
+    #email, senha, cord1, cord2 = User.select_user()
+    #print(email, senha, cord1, cord2)
     horario = Horario(['12:00', '18:00', '19:00', '21:00'])
-    print(horario.delete_horarios())
-    #msg = horario.insert_horarios()
+    #print(horario.delete_horarios())
+    print(horario.insert_horarios())
+    #print(Horario.select_horario())
     #print(msg)
 
-
-# user = Usuario('macelo.matos@e-deploy.com.br', '784512@Ma', 0,0,0,0)
-# user.insert_user()
-# select = list(cursor.execute("select COUNT(ID_user) from usuario;"))[0][0]
