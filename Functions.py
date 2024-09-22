@@ -11,6 +11,7 @@ import pyautogui
 import datetime
 import keyboard
 from tkinter import messagebox
+import os
 
 import Usuarios
 from Usuarios import User
@@ -32,25 +33,20 @@ def final(funcao):
         keyboard.press('enter')
         keyboard.release('enter')
 
-    def cerebro(__email__, __password__, cords1, cords2, last_time_=None):
+    def brain(__email__, __password__, cords1, cords2, last_time_=None):
         if last_time_ is not None:
             if time.strftime("%H") == last_time_.split(':')[0]:
                 global ultimo_horario
                 funcao(__email__, __password__, cords1, cords2)
-                # time.sleep(4)
+                time.sleep(4)
                 # whatsapp()
-                # time.sleep(1)
-                # pyautogui.click(x=20, y=1057, button='RIGHT')
-                # time.sleep(1)
-                # pyautogui.click(x=136, y=1012)
-                # time.sleep(1)
-                # pyautogui.click(x=378, y=917)
+                os.system('rundll32.exe user32.dll,LockWorkStation')
                 ultimo_horario = False
             else:
                 funcao(__email__, __password__, cords1, cords2)
         else:
             funcao(__email__, __password__, cords1, cords2)
-    return cerebro
+    return brain
 
 
 @final
@@ -107,7 +103,7 @@ def bater_ponto(__email__='', __password__='', cords1=None, cords2=None, last_ti
             break
 
 
-def cadastro(email='', senha=''):
+def registration_user(email='', senha=''):
     try:
         servico = Service(ChromeDriverManager().install())
         navegador = webdriver.Chrome(service=servico)
@@ -215,7 +211,7 @@ def __start_loop__(utilizar=None, __times__=None):
             time.sleep(1)
 
 
-def format_horarios(horario):
+def format_schedules(horario):
     try:
         hor_separate = horario.split(':')
         print(hor_separate)

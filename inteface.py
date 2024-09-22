@@ -35,13 +35,11 @@ class Application(tk.Tk):
         self.current_frame = frame_class(self)
         self.current_frame.place(relx=0.5, rely=0.5, anchor='center')
 
-    def acabar(self):
-        self.destroy()
-
     def user_validation(self, info):
-        existe = User.validation()
-        if existe:
-            self.show_frame(Iniciar)
+        # exists = User.validation()
+        exists = True
+        if exists:
+            self.show_frame(StartScript)
         else:
             info.config(text='Não existe usuario cadastrado!', fg='red')
 
@@ -62,7 +60,7 @@ class FirstScreen(tk.Frame):
         label_info = tk.Label(self, text='', font=font2)
         label_info.grid(column=0, row=4, pady=10, columnspan=1)
 
-        buttom_cadastro = tk.Button(self, text='Cadastro usuario', command=lambda: master.show_frame(Cadastro),
+        buttom_cadastro = tk.Button(self, text='Cadastro usuario', command=lambda: master.show_frame(UserInterface),
                                     width=20, height=2, font=font2)
         buttom_cadastro.grid(column=0, row=2, pady=6)
 
@@ -71,7 +69,7 @@ class FirstScreen(tk.Frame):
         buttom_iniciar.grid(column=0, row=1, pady=6)
 
         buttom_horarios = tk.Button(self, text='Cadastro de horarios',
-                                    command=lambda: master.show_frame(Horarios), width=20, height=2, font=font2)
+                                    command=lambda: master.show_frame(SchedulesInterface), width=20, height=2, font=font2)
         buttom_horarios.grid(column=0, row=3, pady=6)
 
         # Ajuste a proporção das colunas para expandir conforme necessário
@@ -85,7 +83,7 @@ class FirstScreen(tk.Frame):
 
 
 # Tela das opções de cadastro de usuario
-class Cadastro(tk.Frame):
+class UserInterface(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master)
@@ -100,15 +98,15 @@ class Cadastro(tk.Frame):
         label_info.grid(column=0, row=5, pady=13)
 
         button_cadastro = tk.Button(self, text='Cadastro', width=14, height=2, font=font2,
-                                    command=lambda: Cadastro.validacao_cadastro(master, label_info))
+                                    command=lambda: UserInterface.validacao_cadastro(master, label_info))
         button_cadastro.grid(column=0, row=1, pady=6)
 
         button_alterar = tk.Button(self, text='Alterar', width=14, height=2, font=font2,
-                                   command=lambda: master.show_frame(AlterarUser))
+                                   command=lambda: master.show_frame(ChangeUser))
         button_alterar.grid(column=0, row=2, pady=6)
 
         button_deletar = tk.Button(self, text='Deletar', width=14, height=2, font=font2,
-                                   command=lambda: Cadastro.deletar_user(label_info))
+                                   command=lambda: UserInterface.deletar_user(label_info))
         button_deletar.grid(column=0, row=3, pady=6)
 
         button_voltar = tk.Button(self, text='Voltar', width=14, height=2, font=font2,
@@ -128,13 +126,13 @@ class Cadastro(tk.Frame):
     def validacao_cadastro(master, info):
         cadastro = User.validation()
         if cadastro is not True:
-            master.show_frame(CadastroUser)
+            master.show_frame(RegistrationUser)
         else:
             info.config(text='Já existe um usuario cadastrado', fg='orange')
 
 
 # Tela cadastro User
-class CadastroUser(tk.Frame):
+class RegistrationUser(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master=master)
@@ -158,11 +156,11 @@ class CadastroUser(tk.Frame):
         senha = tk.Entry(self, show='*', width=35)
         senha.grid(column=1, row=2, pady=10, sticky='w')
 
-        enviar = tk.Button(self, command=lambda: CadastroUser.acabar(email, senha, label_informacao),
+        enviar = tk.Button(self, command=lambda: RegistrationUser.acabar(email, senha, label_informacao),
                            text='Enviar', width=10, height=1, font=font2)
         enviar.grid(column=0, row=3, padx=5, pady=12, sticky='e')
 
-        voltar = tk.Button(self, command=lambda: master.show_frame(Cadastro), text='Voltar', width=10, height=1,
+        voltar = tk.Button(self, command=lambda: master.show_frame(UserInterface), text='Voltar', width=10, height=1,
                            font=font2)
         voltar.grid(column=1, row=3, padx=5, pady=12, columnspan=1, sticky='w')
 
@@ -184,12 +182,12 @@ class CadastroUser(tk.Frame):
         if email == '' and senha == '':
             info.config(text='Os campos não foram preenchidos!', fg='red')
         else:
-            msg = Functions.cadastro(email=email, senha=senha)
+            msg = Functions.registration_user(email=email, senha=senha)
             info.config(text=msg, fg='green')
 
 
 # Tela para alterar o cadastro do usuario - Pedente
-class AlterarUser(tk.Frame):
+class ChangeUser(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master)
@@ -200,13 +198,13 @@ class AlterarUser(tk.Frame):
         label_teste = tk.Label(self, text='Preencha os dados:')
         label_teste.grid(column=0, row=0, pady=15, columnspan=2, sticky='w')
 
-        voltar = tk.Button(self, command=lambda: master.show_frame(Cadastro), text='Voltar', width=10, height=1,
+        voltar = tk.Button(self, command=lambda: master.show_frame(UserInterface), text='Voltar', width=10, height=1,
                            font=font2)
         voltar.grid(column=1, row=3, padx=5, pady=12, columnspan=1, sticky='w')
 
 
 # Tela com as opções de inicio
-class Iniciar(tk.Frame):
+class StartScript(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master)
@@ -221,11 +219,11 @@ class Iniciar(tk.Frame):
         info.grid(column=0, row=6, pady=6, sticky='we', columnspan=2)
 
         button_horarios = tk.Button(self, text='Horarios salvos', width=12, height=2, font=font2,
-                                    command=lambda: Iniciar.horarios_salvos(info))
+                                    command=lambda: StartScript.horarios_salvos(info))
         button_horarios.grid(column=0, row=1, pady=10, padx=5, sticky='we', columnspan=2)
 
         button_horariosp = tk.Button(self, text='Definir horario', width=12, height=2, font=font2,
-                                     command='')
+                                     command=lambda: master.show_frame(StartNoTimesSaved))
         button_horariosp.grid(column=0, row=2, pady=6, padx=5, sticky='we', columnspan=2)
 
         voltar = tk.Button(self, command=lambda: master.show_frame(FirstScreen), text='Voltar', width=10, height=2,
@@ -255,12 +253,55 @@ class Iniciar(tk.Frame):
             info.config('Não tem horarios salvos cadastrados')
 
 
-class IniciarHorariosSalvos(tk.Frame):
-    pass
+class StartNoTimesSaved(tk.Frame):
+
+    def __init__(self, master):
+        super().__init__(master)
+
+        font = tk.font.Font(weight='bold', size=13)
+        font2 = tk.font.Font(weight='bold', size=10)
+
+        label_principal = tk.Label(self, text='Coloque os horarios no formato 00:00:', font=font)
+        label_principal.grid(column=0, row=0, pady=12, columnspan=2)
+
+        label_info = tk.Label(self, text='', font=font2)
+        label_info.grid(column=0, row=6, pady=12, columnspan=2)
+
+        label_time1 = tk.Label(self, text='1º Horario:', font=font2)
+        label_time1.grid(column=0, row=1, padx=3, pady=8, sticky='w')
+
+        eh1 = tk.Entry(self)
+        eh1.grid(column=1, row=1, sticky='we', pady=8)
+
+        label_time2 = tk.Label(self, text='2° Horario:', font=font2)
+        label_time2.grid(column=0, row=2, padx=3, pady=8, sticky='w')
+
+        eh2 = tk.Entry(self)
+        eh2.grid(column=1, row=2, sticky='we', pady=8)
+
+        label_time3 = tk.Label(self, text='3° Horario:', font=font2)
+        label_time3.grid(column=0, row=3, padx=3, pady=8, sticky='w')
+
+        eh3 = tk.Entry(self)
+        eh3.grid(column=1, row=3, sticky='we', pady=8)
+
+        label_time4 = tk.Label(self, text='4° Horario:', font=font2)
+        label_time4.grid(column=0, row=4, padx=3, pady=8, sticky='w')
+
+        eh4 = tk.Entry(self)
+        eh4.grid(column=1, row=4, sticky='we', pady=8)
+
+        button_cadastrar = tk.Button(self, text='Iniciar', width=15, height=1, font=font2,
+                                     command=lambda: print('Sou foda'))
+        button_cadastrar.grid(column=0, row=5, sticky='w', pady=15)
+
+        button_voltar = tk.Button(self, text='Voltar', width=15, height=1, font=font2,
+                                  command=lambda: master.show_frame(StartScript))
+        button_voltar.grid(column=1, row=5, sticky='w', pady=15)
 
 
 # Tela das opções de cadastro de Horario
-class Horarios(tk.Frame):
+class SchedulesInterface(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master)
@@ -275,14 +316,14 @@ class Horarios(tk.Frame):
         info.grid(column=0, row=5, pady=10)
 
         button_cadastro = tk.Button(self, text='Cadastro', width=14, height=2, font=font2,
-                                    command=lambda: master.show_frame(HorariosCadastro))
+                                    command=lambda: master.show_frame(SchedulesRegistration))
         button_cadastro.grid(column=0, row=1, pady=6)
 
         button_alterar = tk.Button(self, text='Alterar', width=14, height=2, font=font2)
         button_alterar.grid(column=0, row=2, pady=6)
 
         button_deletar = tk.Button(self, text='Deletar', width=14, height=2, font=font2,
-                                   command=lambda: Horarios.delete_hor(info))
+                                   command=lambda: SchedulesInterface.delete_hor(info))
         button_deletar.grid(column=0, row=3, pady=6)
 
         button_voltar = tk.Button(self, text='Voltar', width=14, height=2, font=font2,
@@ -296,7 +337,7 @@ class Horarios(tk.Frame):
 
 
 # Tela cadastro User
-class HorariosCadastro(tk.Frame):
+class SchedulesRegistration(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master)
@@ -335,19 +376,19 @@ class HorariosCadastro(tk.Frame):
         eh4.grid(column=1, row=4, sticky='we', pady=8)
 
         button_cadastrar = tk.Button(self, text='Enviar', width=15, height=1, font=font2,
-                                     command=lambda: HorariosCadastro.cadastrar_hors(eh1, eh2, eh3, eh4, label_info,
-                                                                                     master))
+                                     command=lambda: SchedulesRegistration.cadastrar_hors(eh1, eh2, eh3, eh4, label_info,
+                                                                                          master))
         button_cadastrar.grid(column=0, row=5, sticky='w', pady=15)
 
         button_voltar = tk.Button(self, text='Voltar', width=15, height=1, font=font2,
-                                  command=lambda: master.show_frame(Horarios))
+                                  command=lambda: master.show_frame(SchedulesInterface))
         button_voltar.grid(column=1, row=5, sticky='w', pady=15)
 
     @staticmethod
     def cadastrar_hors(h1, h2, h3, h4, info, master):
         hors = [h1.get(), h2.get(), h3.get(), h4.get()]
         list_hors = [horario for horario in hors if horario != '']
-        format_validation = [Functions.format_horarios(hora) for hora in list_hors]
+        format_validation = [Functions.format_schedules(hora) for hora in list_hors]
         if all(format_validation):
             if len(list_hors) <= 1:
                 info.config(text='Por favor insira pelo o menos 2 horarios', fg='red')
@@ -355,6 +396,9 @@ class HorariosCadastro(tk.Frame):
                 hor = SchedulesMm(list_hors)
                 msg = hor.insert_horarios()
                 info.config(text=msg, fg='green')
+                info.update()
+                time.sleep(2)
+                master.show_frame(FirstScreen)
         else:
             info.config(text='Horaios não estão no formado 00:00', fg='red')
 
