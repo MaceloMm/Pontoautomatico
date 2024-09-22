@@ -110,7 +110,7 @@ class User:
         print(self.__email, self.__senha, self.__coord_x, self.__coord_y, self.__coord_x_2, self.__coord_y_2)
 
 
-class Horario:
+class SchedulesMm:
     def __init__(self, hours):
         self.__horarios = hours
 
@@ -175,7 +175,7 @@ class Horario:
     @staticmethod
     def delete_horarios():
         __banco__ = Banco()
-        validador = Horario.validation_horarios()
+        validador = SchedulesMm.validation_horarios()
 
         try:
             __cursor__ = __banco__.get_banco.cursor()
@@ -194,7 +194,7 @@ class Horario:
     @staticmethod
     def select_horario():
         __banco__ = Banco()
-        validacao = Horario.validation_horarios()
+        validacao = SchedulesMm.validation_horarios()
 
         try:
             if validacao:
@@ -209,15 +209,16 @@ class Horario:
         except:
             return 'Ocorreu um erro ao retorna os cadastros'
 
+
 if __name__ == '__main__':
     pass
-    #macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
-    #macelo.insert_user()
+    macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
+    print(macelo.insert_user())
     #email, senha, cord1, cord2 = User.select_user()
     #print(email, senha, cord1, cord2)
-    horario = Horario(['12:00', '18:00', '19:00', '21:00'])
+    #horario = Horario(['12:00', '18:00', '19:00', '21:00'])
     #print(horario.delete_horarios())
-    print(horario.insert_horarios())
+    #print(horario.insert_horarios())
     #print(Horario.select_horario())
     #print(msg)
 

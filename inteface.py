@@ -4,7 +4,7 @@ import tkinter as tk
 from ttkbootstrap import Style
 import Functions
 from Usuarios import User
-from Usuarios import Horario
+from Usuarios import SchedulesMm
 
 
 class Application(tk.Tk):
@@ -39,14 +39,14 @@ class Application(tk.Tk):
         self.destroy()
 
     def user_validation(self, info):
-        # existe = User.validation
-        existe = False
+        existe = User.validation()
         if existe:
             self.show_frame(Iniciar)
         else:
             info.config(text='Não existe usuario cadastrado!', fg='red')
 
 
+# Primeira tela
 class FirstScreen(tk.Frame):
 
     def __init__(self, master):
@@ -84,6 +84,7 @@ class FirstScreen(tk.Frame):
         self.grid_rowconfigure(1, weight=1)
 
 
+# Tela das opções de cadastro de usuario
 class Cadastro(tk.Frame):
 
     def __init__(self, master):
@@ -132,6 +133,7 @@ class Cadastro(tk.Frame):
             info.config(text='Já existe um usuario cadastrado', fg='orange')
 
 
+# Tela cadastro User
 class CadastroUser(tk.Frame):
 
     def __init__(self, master):
@@ -186,6 +188,7 @@ class CadastroUser(tk.Frame):
             info.config(text=msg, fg='green')
 
 
+# Tela para alterar o cadastro do usuario - Pedente
 class AlterarUser(tk.Frame):
 
     def __init__(self, master):
@@ -202,18 +205,23 @@ class AlterarUser(tk.Frame):
         voltar.grid(column=1, row=3, padx=5, pady=12, columnspan=1, sticky='w')
 
 
+# Tela com as opções de inicio
 class Iniciar(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master)
 
+        font = tk.font.Font(weight='bold', size=13)
         font2 = tk.font.Font(weight='bold', size=10)
 
-        texto_teste = tk.Label(self, text='Estou funcionando', font=10)
+        texto_teste = tk.Label(self, text='Escolha uma opção:', font=font)
         texto_teste.grid(column=0, row=0, pady=0, columnspan=2, sticky='w')
 
-        button_horarios = tk.Button(self, text='Horarios salvos', width=12, height=2,
-                                    font=font2)
+        info = tk.Label(self, text='', font=10)
+        info.grid(column=0, row=6, pady=6, sticky='we', columnspan=2)
+
+        button_horarios = tk.Button(self, text='Horarios salvos', width=12, height=2, font=font2,
+                                    command=lambda: Iniciar.horarios_salvos(info))
         button_horarios.grid(column=0, row=1, pady=10, padx=5, sticky='we', columnspan=2)
 
         button_horariosp = tk.Button(self, text='Definir horario', width=12, height=2, font=font2,
@@ -236,10 +244,22 @@ class Iniciar(tk.Frame):
         self.grid_rowconfigure(3, weight=1)
 
     @staticmethod
-    def horarios_salvos():
-        pass
+    def horarios_salvos(info):
+        validation = SchedulesMm.validation_horarios()
+        if validation:
+            info.config(text='Estou rodando', fg='green')
+            info.update()
+            msg = Functions.__start_loop__(utilizar=True)
+            info.config(text=msg, fg='white')
+        else:
+            info.config('Não tem horarios salvos cadastrados')
 
 
+class IniciarHorariosSalvos(tk.Frame):
+    pass
+
+
+# Tela das opções de cadastro de Horario
 class Horarios(tk.Frame):
 
     def __init__(self, master):
@@ -271,10 +291,11 @@ class Horarios(tk.Frame):
 
     @staticmethod
     def delete_hor(info):
-        msg = Horario.delete_horarios()
+        msg = SchedulesMm.delete_horarios()
         info.config(text=msg, fg='green')
 
 
+# Tela cadastro User
 class HorariosCadastro(tk.Frame):
 
     def __init__(self, master):
@@ -325,13 +346,13 @@ class HorariosCadastro(tk.Frame):
     @staticmethod
     def cadastrar_hors(h1, h2, h3, h4, info, master):
         hors = [h1.get(), h2.get(), h3.get(), h4.get()]
-        list_hors = [horario for horario in hors if horario is not None]
+        list_hors = [horario for horario in hors if horario != '']
         format_validation = [Functions.format_horarios(hora) for hora in list_hors]
         if all(format_validation):
             if len(list_hors) <= 1:
                 info.config(text='Por favor insira pelo o menos 2 horarios', fg='red')
             else:
-                hor = Horario(list_hors)
+                hor = SchedulesMm(list_hors)
                 msg = hor.insert_horarios()
                 info.config(text=msg, fg='green')
         else:

@@ -32,26 +32,29 @@ def final(funcao):
         keyboard.press('enter')
         keyboard.release('enter')
 
-    def cerebro(__email__, __password__, cords1, cords2):
-        if time.strftime("%H") == '20':
-            global ultimo_horario
-            funcao(__email__, __password__, cords1, cords2)
-            time.sleep(4)
-            whatsapp()
-            time.sleep(1)
-            pyautogui.click(x=20, y=1057, button='RIGHT')
-            time.sleep(1)
-            pyautogui.click(x=136, y=1012)
-            time.sleep(1)
-            pyautogui.click(x=378, y=917)
-            ultimo_horario = False
+    def cerebro(__email__, __password__, cords1, cords2, last_time_=None):
+        if last_time_ is not None:
+            if time.strftime("%H") == last_time_.split(':')[0]:
+                global ultimo_horario
+                funcao(__email__, __password__, cords1, cords2)
+                # time.sleep(4)
+                # whatsapp()
+                # time.sleep(1)
+                # pyautogui.click(x=20, y=1057, button='RIGHT')
+                # time.sleep(1)
+                # pyautogui.click(x=136, y=1012)
+                # time.sleep(1)
+                # pyautogui.click(x=378, y=917)
+                ultimo_horario = False
+            else:
+                funcao(__email__, __password__, cords1, cords2)
         else:
             funcao(__email__, __password__, cords1, cords2)
     return cerebro
 
 
 @final
-def bater_ponto(__email__='', __password__='', cords1=None, cords2=None):
+def bater_ponto(__email__='', __password__='', cords1=None, cords2=None, last_time_=None):
     cords1 = cords1 or {'x': 0, 'y': 0}
     cords2 = cords2 or {'x': 0, 'y': 0}
     while True:
@@ -139,47 +142,83 @@ def cadastro(email='', senha=''):
         return resultado
 
 
-def __start_loop__(Utilizar=None):
+def __start_loop__(utilizar=None, __times__=None):
     # Pensar num jeito de fazer essa birosca que vc invetou funcioanar, cabeça de rola.
-    if Utilizar:
+    if utilizar:
         email, senha, cord1, cord2 = User.select_user()
-        horaios = Usuarios.Horario.select_horario()
+        __times__ = Usuarios.SchedulesMm.select_horario()
+        __times__ = [h for h in __times__ if h is not None]
+        last_time = __times__[len(__times__) - 1]
 
-        if len(horaios) == 2:
-            schedule.every().day.at(horaios[0]).do(
+        if len(__times__) == 2:
+            schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
-            schedule.every().day.at(horaios[1]).do(
+            schedule.every().day.at(__times__[1]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
+                                    last_time_=last_time))
+        elif len(__times__) == 3:
+            schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
-        elif len(horaios) == 3:
-            schedule.every().day.at(horaios[0]).do(
+            schedule.every().day.at(__times__[1]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
-            schedule.every().day.at(horaios[1]).do(
+            schedule.every().day.at(__times__[2]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
+                                    last_time_=last_time))
+        elif len(__times__) == 4:
+            schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
-            schedule.every().day.at(horaios[2]).do(
+            schedule.every().day.at(__times__[1]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
-        elif len(horaios) == 4:
-            schedule.every().day.at(horaios[0]).do(
+            schedule.every().day.at(__times__[2]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
-            schedule.every().day.at(horaios[1]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
-            schedule.every().day.at(horaios[2]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
-            schedule.every().day.at(horaios[3]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(__times__[3]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
+                                    last_time_=last_time))
         else:
             return 'Não existe horarios validos cadastrados'
         while ultimo_horario:
             schedule.run_pending()
             time.sleep(1)
+        return 'Terminei o dia!'
     else:
         # Programar essa parte depois cabeça de pika
-        pass
-
+        __times__ = [h for h in __times__ if h != '']
+        last_time = __times__[len(__times__) - 1]
+        if len(__times__) == 2:
+            schedule.every().day.at(__times__[0]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(__times__[1]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
+                                    last_time_=last_time))
+        elif len(__times__) == 3:
+            schedule.every().day.at(__times__[0]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(__times__[1]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(__times__[2]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
+                                    last_time_=last_time))
+        elif len(__times__) == 4:
+            schedule.every().day.at(__times__[0]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(__times__[1]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(__times__[2]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+            schedule.every().day.at(__times__[3]).do(
+                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
+                                    last_time_=last_time))
+        else:
+            return 'Não existe horarios validos cadastrados'
+        while ultimo_horario:
+            schedule.run_pending()
+            time.sleep(1)
 
 
 def format_horarios(horario):
     try:
         hor_separate = horario.split(':')
+        print(hor_separate)
     except AttributeError:
         return False
     else:
@@ -190,8 +229,16 @@ def format_horarios(horario):
             except ValueError:
                 return False
             else:
-                if type(first_num) == int and type(second_num) == int:
-                    return True
+                if first_num is int and second_num is int:
+                    if 1 <= first_num <= 23:
+                        if 59 >= second_num >= 1:
+                            return True
+                        else:
+                            return False
+                    else:
+                        return False
+                else:
+                    return False
         else:
             return False
 
