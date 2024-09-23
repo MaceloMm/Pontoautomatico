@@ -6,6 +6,7 @@ import Functions
 from Usuarios import User
 from Usuarios import SchedulesMm
 
+mensa = None
 
 class Application(tk.Tk):
 
@@ -26,14 +27,25 @@ class Application(tk.Tk):
         # style = Style(theme='vapor')
         style = Style(theme='cyborg')
 
-        texto_principal = tk.Label(self, text='Desenvolvido por Macelo')
-        texto_principal.place(x=575, y=430, anchor='se')
+        dev = tk.Label(self, text='Desenvolvido por Macelo')
+        dev.place(x=575, y=430, anchor='se')
 
-    def show_frame(self, frame_class):
+
+    def show_frame(self, frame_class, name='Ponto Automatico'):
+
+        global mensa
+        font_principal = tk.font.Font(size=15, weight='bold')
+
         if self.current_frame is not None:
             self.current_frame.destroy()
         self.current_frame = frame_class(self)
         self.current_frame.place(relx=0.5, rely=0.5, anchor='center')
+        if mensa is None:
+            principal_text = tk.Label(self, text=name, font=font_principal)
+            principal_text.place(x=25, y=25, anchor='nw')
+            mensa = 'existe'
+        else:
+            principal_text.config(text=name)
 
     def user_validation(self, info):
         # exists = User.validation()
@@ -51,7 +63,7 @@ class FirstScreen(tk.Frame):
         super().__init__(master)
         self.configure()
 
-        font = tk.font.Font(weight='bold', size=13)
+        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         label = tk.Label(self, text='Escolha uma das opções:', font=font, )
@@ -60,7 +72,8 @@ class FirstScreen(tk.Frame):
         label_info = tk.Label(self, text='', font=font2)
         label_info.grid(column=0, row=4, pady=10, columnspan=1)
 
-        buttom_cadastro = tk.Button(self, text='Cadastro usuario', command=lambda: master.show_frame(UserInterface),
+        buttom_cadastro = tk.Button(self, text='Cadastro usuario',
+                                    command=lambda: master.show_frame(UserInterface, 'Cadastro de Usuario'),
                                     width=20, height=2, font=font2)
         buttom_cadastro.grid(column=0, row=2, pady=6)
 
@@ -69,7 +82,8 @@ class FirstScreen(tk.Frame):
         buttom_iniciar.grid(column=0, row=1, pady=6)
 
         buttom_horarios = tk.Button(self, text='Cadastro de horarios',
-                                    command=lambda: master.show_frame(SchedulesInterface), width=20, height=2, font=font2)
+                                    command=lambda: master.show_frame(SchedulesInterface, 'Cadastro de Horarios')
+                                    , width=20, height=2, font=font2)
         buttom_horarios.grid(column=0, row=3, pady=6)
 
         # Ajuste a proporção das colunas para expandir conforme necessário
@@ -88,7 +102,7 @@ class UserInterface(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font = tk.font.Font(weight='bold', size=13)
+        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         label_option = tk.Label(self, text='Escolha uma das opções abaixo:', font=font)
@@ -137,7 +151,7 @@ class RegistrationUser(tk.Frame):
     def __init__(self, master):
         super().__init__(master=master)
 
-        font = tk.font.Font(weight='bold', size=13)
+        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         label = tk.Label(self, text='Preencha as informações:', font=font)
@@ -192,7 +206,7 @@ class ChangeUser(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font = tk.font.Font(weight='bold', size=13)
+        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         label_teste = tk.Label(self, text='Preencha os dados:')
@@ -209,7 +223,7 @@ class StartScript(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font = tk.font.Font(weight='bold', size=13)
+        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         texto_teste = tk.Label(self, text='Escolha uma opção:', font=font)
@@ -258,7 +272,7 @@ class StartNoTimesSaved(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font = tk.font.Font(weight='bold', size=13)
+        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         label_principal = tk.Label(self, text='Coloque os horarios no formato 00:00:', font=font)
@@ -306,7 +320,7 @@ class SchedulesInterface(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font = tk.font.Font(weight='bold', size=13)
+        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         label_option = tk.Label(self, text='Escolha uma das opções abaixo:', font=font)
@@ -342,7 +356,7 @@ class SchedulesRegistration(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font = tk.font.Font(weight='bold', size=13)
+        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         label_principal = tk.Label(self, text='Coloque os horarios no formato 00:00:', font=font)
