@@ -230,7 +230,7 @@ def format_schedules(horario):
             else:
                 if type(first_num) is int and type(second_num) is int:
                     if 1 <= first_num <= 23:
-                        if 59 >= second_num >= 1:
+                        if 59 >= second_num >= 0:
                             return True
                         else:
                             return False

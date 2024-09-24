@@ -44,8 +44,7 @@ class Application(tk.Tk):
         self.info.config(text=name)
 
     def user_validation(self, info):
-        # exists = User.validation()
-        exists = True
+        exists = User.validation()
         if exists:
             self.show_frame(StartScript)
         else:
@@ -102,7 +101,7 @@ class UserInterface(tk.Frame):
         font2 = tk.font.Font(weight='bold', size=10)
 
         label_option = tk.Label(self, text='Escolha uma das opções abaixo:', font=font)
-        label_option.grid(column=0, row=0, columnspan=1, sticky='e', pady=12)
+        label_option.grid(column=0, row=0, columnspan=1, sticky='we', pady=12)
 
         label_info = tk.Label(self, text='', font=font)
         label_info.grid(column=0, row=5, pady=13)
