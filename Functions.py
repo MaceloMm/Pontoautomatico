@@ -33,14 +33,15 @@ def final(funcao):
         keyboard.press('enter')
         keyboard.release('enter')
 
-    def brain(__email__, __password__, cords1, cords2, last_time_=None):
+    def brain(__email__, __password__, cords1, cords2, last_time_=None, var=None):
         if last_time_ is not None:
             if time.strftime("%H") == last_time_.split(':')[0]:
                 global ultimo_horario
                 funcao(__email__, __password__, cords1, cords2)
                 time.sleep(4)
                 # whatsapp()
-                os.system('rundll32.exe user32.dll,LockWorkStation')
+                if var == 1:
+                    os.system('rundll32.exe user32.dll,LockWorkStation')
                 ultimo_horario = False
             else:
                 funcao(__email__, __password__, cords1, cords2)
@@ -50,7 +51,7 @@ def final(funcao):
 
 
 @final
-def bater_ponto(__email__='', __password__='', cords1=None, cords2=None, last_time_=None):
+def bater_ponto(__email__='', __password__='', cords1=None, cords2=None, last_time_=None, var=None):
     cords1 = cords1 or {'x': 0, 'y': 0}
     cords2 = cords2 or {'x': 0, 'y': 0}
     while True:
@@ -138,7 +139,7 @@ def registration_user(email='', senha=''):
         return resultado
 
 
-def __start_loop__(utilizar=None, __times__=None):
+def __start_loop__(utilizar=None, __times__=None, block=None):
     # Pensar num jeito de fazer essa birosca que vc invetou funcioanar, cabeça de rola.
     if utilizar:
         email, senha, cord1, cord2 = User.select_user()
@@ -151,7 +152,7 @@ def __start_loop__(utilizar=None, __times__=None):
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
             schedule.every().day.at(__times__[1]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time))
+                                    last_time_=last_time, var=block))
         elif len(__times__) == 3:
             schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
@@ -159,7 +160,7 @@ def __start_loop__(utilizar=None, __times__=None):
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
             schedule.every().day.at(__times__[2]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time))
+                                    last_time_=last_time, var=block))
         elif len(__times__) == 4:
             schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
@@ -169,7 +170,7 @@ def __start_loop__(utilizar=None, __times__=None):
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
             schedule.every().day.at(__times__[3]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time))
+                                    last_time_=last_time, var=block))
         else:
             return 'Não existe horarios validos cadastrados'
         while ultimo_horario:
@@ -178,6 +179,7 @@ def __start_loop__(utilizar=None, __times__=None):
         return 'Terminei o dia!'
     else:
         # Programar essa parte depois cabeça de pika
+        email, senha, cord1, cord2 = User.select_user()
         __times__ = [h for h in __times__ if h != '']
         last_time = __times__[len(__times__) - 1]
         if len(__times__) == 2:
@@ -185,7 +187,7 @@ def __start_loop__(utilizar=None, __times__=None):
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
             schedule.every().day.at(__times__[1]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time))
+                                    last_time_=last_time, var=block))
         elif len(__times__) == 3:
             schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
@@ -193,7 +195,7 @@ def __start_loop__(utilizar=None, __times__=None):
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
             schedule.every().day.at(__times__[2]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time))
+                                    last_time_=last_time, var=block))
         elif len(__times__) == 4:
             schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
@@ -203,13 +205,13 @@ def __start_loop__(utilizar=None, __times__=None):
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
             schedule.every().day.at(__times__[3]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time))
+                                    last_time_=last_time, var=block))
         else:
             return 'Não existe horarios validos cadastrados'
         while ultimo_horario:
             schedule.run_pending()
             time.sleep(1)
-
+        return 'Terminei o dia'
 
 def format_schedules(horario):
     try:
@@ -222,10 +224,11 @@ def format_schedules(horario):
             try:
                 first_num = int(hor_separate[0])
                 second_num = int(hor_separate[1])
+                print(first_num, second_num)
             except ValueError:
                 return False
             else:
-                if first_num is int and second_num is int:
+                if type(first_num) is int and type(second_num) is int:
                     if 1 <= first_num <= 23:
                         if 59 >= second_num >= 1:
                             return True
@@ -240,4 +243,4 @@ def format_schedules(horario):
 
 
 if __name__ == '__main__':
-    __start_loop__()
+    format_schedules('09:16')
