@@ -165,7 +165,7 @@ class RegistrationUser(tk.Frame):
         senha = tk.Entry(self, show='*', width=35)
         senha.grid(column=1, row=2, pady=10, sticky='w')
 
-        enviar = tk.Button(self, command=lambda: RegistrationUser.acabar(email, senha, label_informacao),
+        enviar = tk.Button(self, command=lambda: RegistrationUser.acabar(email, senha, label_informacao, master),
                            text='Enviar', width=10, height=1, font=font2)
         enviar.grid(column=0, row=3, padx=5, pady=12, sticky='e')
 
@@ -185,7 +185,7 @@ class RegistrationUser(tk.Frame):
         self.grid_rowconfigure(3, weight=1)
 
     @staticmethod
-    def acabar(dado1, dado2, info):
+    def acabar(dado1, dado2, info, master):
         email = dado1.get()
         senha = dado2.get()
         if email == '' and senha == '':
@@ -193,6 +193,11 @@ class RegistrationUser(tk.Frame):
         else:
             msg = Functions.registration_user(email=email, senha=senha)
             info.config(text=msg, fg='green')
+            info.update()
+            time.sleep(2)
+            master.show_frame(UserInterface, 'Cadastro de Usuario')
+
+
 
 
 # Tela para alterar o cadastro do usuario - Pedente
@@ -432,7 +437,7 @@ class SchedulesRegistration(tk.Frame):
                 info.config(text=msg, fg='green')
                 info.update()
                 time.sleep(2)
-                master.show_frame(FirstScreen)
+                master.show_frame(SchedulesInterface, 'Cadastro de Horarios')
         else:
             info.config(text='Horaios não estão no formado 00:00', fg='red')
 

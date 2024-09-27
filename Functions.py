@@ -90,7 +90,7 @@ def bater_ponto(__email__='', __password__='', cords1=None, cords2=None, last_ti
             time.sleep(15)
             pyautogui.click(x=cords1['x'], y=cords1['y'])
             time.sleep(3)
-            pyautogui.moveTo(x=cords2['x'], y=cords2['y'])
+            pyautogui.click(x=cords2['x'], y=cords2['y'])
             time.sleep(5)
             print(f'ponto batido com sucesso')
             with open('log.txt', 'a') as arquivo:
