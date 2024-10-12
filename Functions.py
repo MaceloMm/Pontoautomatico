@@ -75,9 +75,12 @@ def bater_ponto(__email__='', __password__='', cords1=None, cords2=None, last_ti
                 navegador.find_element('xpath',
                                        '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
             except:
-                navegador.find_element('xpath',
-                                       '//*[@id="app"]/div/section/section/div[1]/div'
-                                       '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
+                try:
+                    navegador.find_element('xpath',
+                                           '//*[@id="app"]/div/section/section/div[1]/div'
+                                           '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
+                except:
+                    pass
         except (ElementNotInteractableException, selenium.common.NoSuchWindowException) as err:
             with open('log.txt', 'a') as arquivo:
                 arquivo.write(f'ERROR: Ocorreu um ERRO!\n')
