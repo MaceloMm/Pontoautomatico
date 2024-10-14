@@ -216,7 +216,6 @@ def __start_loop__(utilizar=None, __times__=None, block=None):
 def format_schedules(horario):
     try:
         hor_separate = horario.split(':')
-        print(hor_separate)
     except AttributeError:
         return False
     else:
@@ -224,7 +223,6 @@ def format_schedules(horario):
             try:
                 first_num = int(hor_separate[0])
                 second_num = int(hor_separate[1])
-                print(first_num, second_num)
             except ValueError:
                 return False
             else:

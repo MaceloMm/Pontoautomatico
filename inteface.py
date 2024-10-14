@@ -198,8 +198,6 @@ class RegistrationUser(tk.Frame):
             master.show_frame(UserInterface, 'Cadastro de Usuario')
 
 
-
-
 # Tela para alterar o cadastro do usuario - Pedente
 class ChangeUser(tk.Frame):
 
