@@ -1,9 +1,10 @@
 # _*_ coding: utf-8 _*_
-import time
+
 import tkinter as tk
 from ttkbootstrap import Style
-import Functions
 from Usuarios import User
+import Functions
+import time
 from Usuarios import SchedulesMm
 
 
@@ -204,7 +205,6 @@ class ChangeUser(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        font = tk.font.Font(weight='bold', size=11)
         font2 = tk.font.Font(weight='bold', size=10)
 
         label_teste = tk.Label(self, text='Preencha os dados:')
@@ -360,7 +360,7 @@ class SchedulesInterface(tk.Frame):
         button_alterar.grid(column=0, row=2, pady=6)
 
         button_deletar = tk.Button(self, text='Deletar', width=14, height=2, font=font2,
-                                   command=lambda: SchedulesInterface.delete_hor(info))
+                                   command=lambda: master.show_frame(SchedulesDelete))
         button_deletar.grid(column=0, row=3, pady=6)
 
         button_voltar = tk.Button(self, text='Voltar', width=14, height=2, font=font2,
@@ -371,6 +371,23 @@ class SchedulesInterface(tk.Frame):
     def delete_hor(info):
         msg = SchedulesMm.delete_horarios()
         info.config(text=msg, fg='green')
+
+
+class SchedulesDelete(tk.Frame):
+
+    def __init__(self, master):
+        super().__init__(master)
+
+        font = tk.font.Font(weight='bold', size=13)
+        font2 = tk.font.Font(weight='bold', size=11)
+
+        main_label = tk.Label(self, text='Tem certeza que deseja excluir os \nhorarios abaixo: ', font=font, justify="left")
+        main_label.grid(column=0, row=0)
+
+        label_times = tk.Label(self, text=SchedulesMm.select_horario(), font=font2, fg='blue')
+        label_times.grid(column=0, row=1, pady=15)
+
+
 
 
 # Tela cadastro User
@@ -413,8 +430,8 @@ class SchedulesRegistration(tk.Frame):
         eh4.grid(column=1, row=4, sticky='we', pady=8)
 
         button_cadastrar = tk.Button(self, text='Enviar', width=15, height=1, font=font2,
-                                     command=lambda: SchedulesRegistration.cadastrar_hors(eh1, eh2, eh3, eh4, label_info,
-                                                                                          master))
+                                     command=lambda: SchedulesRegistration.cadastrar_hors(eh1, eh2, eh3, eh4, label_info
+                                                                                          , master))
         button_cadastrar.grid(column=0, row=5, sticky='w', pady=15)
 
         button_voltar = tk.Button(self, text='Voltar', width=15, height=1, font=font2,
