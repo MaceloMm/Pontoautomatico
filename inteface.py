@@ -6,6 +6,7 @@ from Usuarios import User
 import Functions
 import time
 from Usuarios import SchedulesMm
+from tkinter import messagebox
 
 
 class Application(tk.Tk):
@@ -26,6 +27,7 @@ class Application(tk.Tk):
         principal_text.place(x=25, y=25, anchor='nw')
 
         self.info = principal_text
+        self.info.config(fg='cyan')
 
         self.current_frame = None
 
@@ -36,20 +38,21 @@ class Application(tk.Tk):
 
         dev = tk.Label(self, text='Desenvolvido por Macelo')
         dev.place(x=575, y=430, anchor='se')
+        dev.config(fg='cyan')
 
     def show_frame(self, frame_class, name='Ponto Automatico'):
         if self.current_frame is not None:
             self.current_frame.destroy()
         self.current_frame = frame_class(self)
         self.current_frame.place(relx=0.5, rely=0.5, anchor='center')
-        self.info.config(text=name)
+        self.info.config(text=name, fg='cyan')
 
     def user_validation(self, info):
         exists = User.validation()
         if exists:
             self.show_frame(StartScript)
         else:
-            info.config(text='Não existe usuario cadastrado!', fg='red')
+            messagebox.showerror("Info", 'Não existe usuario cadastrado!')
 
 
 # Primeira tela
@@ -116,21 +119,12 @@ class UserInterface(tk.Frame):
         button_alterar.grid(column=0, row=2, pady=6)
 
         button_deletar = tk.Button(self, text='Deletar', width=14, height=2, font=font2,
-                                   command=lambda: UserInterface.deletar_user(label_info))
+                                   command=lambda: master.show_frame(DeleteUsers))
         button_deletar.grid(column=0, row=3, pady=6)
 
         button_voltar = tk.Button(self, text='Voltar', width=14, height=2, font=font2,
                                   command=lambda: master.show_frame(FirstScreen))
         button_voltar.grid(column=0, row=4, pady=6)
-
-    @staticmethod
-    def deletar_user(info):
-        x = User.validation()
-        if x:
-            msg = User.delete_user()
-            info.config(text=msg, fg='green')
-        else:
-            info.config(text='Não existe usuario cadastrado!', fg='red')
 
     @staticmethod
     def validacao_cadastro(master, info):
@@ -193,9 +187,7 @@ class RegistrationUser(tk.Frame):
             info.config(text='Os campos não foram preenchidos!', fg='red')
         else:
             msg = Functions.registration_user(email=email, senha=senha)
-            info.config(text=msg, fg='green')
-            info.update()
-            time.sleep(2)
+            messagebox.showinfo('Info!', message=msg)
             master.show_frame(UserInterface, 'Cadastro de Usuario')
 
 
@@ -213,6 +205,38 @@ class ChangeUser(tk.Frame):
         voltar = tk.Button(self, command=lambda: master.show_frame(UserInterface, 'Cadastro de Usuario'),
                            text='Voltar', width=10, height=1, font=font2)
         voltar.grid(column=1, row=3, padx=5, pady=12, columnspan=1, sticky='w')
+
+
+# Tela de deletar usuarios!
+class DeleteUsers(tk.Frame):
+
+    def __init__(self, master):
+        super().__init__(master)
+
+        font = tk.font.Font(weight='bold', size=13)
+        font2 = tk.font.Font(weight='bold', size=11)
+
+        main_label = tk.Label(self, text='Tem certeza que deseja excluir o \ncadastro atual? ', font=font,
+                              justify="left")
+        main_label.grid(column=0, row=0, columnspan=2)
+
+        button_yes = tk.Button(self, text='Sim', width=12, height=1, font=font2,
+                               command=lambda: DeleteUsers.deletar_user(master))
+        button_yes.grid(column=0, row=2, pady=15)
+
+        button_no = tk.Button(self, text='Não', width=12, height=1, font=font2,
+                              command=lambda: master.show_frame(UserInterface))
+        button_no.grid(column=1, row=2, pady=15)
+
+    @staticmethod
+    def deletar_user(master):
+        x = User.validation()
+        if x:
+            msg = User.delete_user()
+            messagebox.showinfo('Info!', message=msg)
+        else:
+            messagebox.showinfo('Info',message='Não existe usuario cadastrado!')
+        master.show_frame(UserInterface)
 
 
 # Tela com as opções de inicio
@@ -257,12 +281,12 @@ class StartScript(tk.Frame):
     def horarios_salvos(info):
         validation = SchedulesMm.validation_horarios()
         if validation:
-            info.config(text='Estou rodando', fg='green')
+            info.config(text='Estou rodando', fg='green', weight='bold')
             info.update()
             msg = Functions.__start_loop__(utilizar=True)
             info.config(text=msg, fg='white')
         else:
-            info.config('Não tem horarios salvos cadastrados')
+            messagebox.showerror('Info!', 'Não existe horarios salvos')
 
 
 class StartNoTimesSaved(tk.Frame):
@@ -367,12 +391,8 @@ class SchedulesInterface(tk.Frame):
                                   command=lambda: master.show_frame(FirstScreen))
         button_voltar.grid(column=0, row=4, pady=6)
 
-    @staticmethod
-    def delete_hor(info):
-        msg = SchedulesMm.delete_horarios()
-        info.config(text=msg, fg='green')
 
-
+# Tela de Deletar Horarios
 class SchedulesDelete(tk.Frame):
 
     def __init__(self, master):
@@ -382,12 +402,23 @@ class SchedulesDelete(tk.Frame):
         font2 = tk.font.Font(weight='bold', size=11)
 
         main_label = tk.Label(self, text='Tem certeza que deseja excluir os \nhorarios abaixo: ', font=font, justify="left")
-        main_label.grid(column=0, row=0)
+        main_label.grid(column=0, row=0, columnspan=2)
 
         label_times = tk.Label(self, text=SchedulesMm.select_horario(), font=font2, fg='blue')
-        label_times.grid(column=0, row=1, pady=15)
+        label_times.grid(column=0, row=1, pady=15, columnspan=2)
 
+        button_yes = tk.Button(self, text='Sim', width=12, height=1, font=font2,
+                               command=lambda: SchedulesDelete.delete_hor())
+        button_yes.grid(column=0, row=2, pady=10)
 
+        button_no = tk.Button(self, text='Não', width=12, height=1, font=font2,
+                              command=lambda: master.show_frame(SchedulesInterface))
+        button_no.grid(column=1, row=2, pady=10)
+
+    @staticmethod
+    def delete_hor():
+        msg = SchedulesMm.delete_horarios()
+        messagebox.showerror('Info!', message=msg)
 
 
 # Tela cadastro User
@@ -449,8 +480,7 @@ class SchedulesRegistration(tk.Frame):
             else:
                 hor = SchedulesMm(list_hors)
                 msg = hor.insert_horarios()
-                info.config(text=msg, fg='green')
-                info.update()
+                messagebox.showinfo('Info!', message=msg)
                 time.sleep(2)
                 master.show_frame(SchedulesInterface, 'Cadastro de Horarios')
         else:

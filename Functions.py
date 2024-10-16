@@ -131,10 +131,12 @@ def registration_user(email='', senha=''):
             navegador.find_element('xpath',
                                    '//*[@id="app"]/div/section/section/div[1]/div'
                                    '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
-        messagebox.showinfo('Importante!', 'Deixei o mouse em cima de marcar ponto')
+        messagebox.showinfo('Importante!', 'Clique em "OK" e deixe o mouse em cima do botão "Marca Ponto"')
         time.sleep(6)
         positions = pyautogui.position()
-        messagebox.showinfo('Importante!', 'Agora clique em "Marca ponto" e deixe no botão verde')
+        messagebox.showinfo('Importante!', 'Clique em "OK"'
+                                           '\nClique no botão "Marca ponto",'
+                                           '\ne deixe o mouse em cima do botão confirma')
         time.sleep(6)
         positions2 = pyautogui.position()
         usuario = User(email, senha, positions[0], positions[1], positions2[0], positions2[1])
@@ -215,6 +217,7 @@ def __start_loop__(utilizar=None, __times__=None, block=None):
             schedule.run_pending()
             time.sleep(1)
         return 'Terminei o dia'
+
 
 def format_schedules(horario):
     try:

@@ -102,7 +102,7 @@ class User:
             """.format(email, password, x, y, x2, y2))
             __banco__.get_banco.commit()
             __banco__.get_banco.close()
-            return 'Alteração realizada com Sucesso!'
+            return 'Alterações realizadas com Sucesso!'
         except:
             return 'Erro ao alterar o usuário!'
 
@@ -142,7 +142,7 @@ class SchedulesMm:
         try:
             __cursor__ = __banco__.get_banco.cursor()
             if validacao:
-                return 'Já existe um horario cadastrado'
+                return 'Já existe um horarios cadastrado'
             else:
                 if quant_hor >= 1:
                     if quant_hor == 2:
@@ -166,7 +166,7 @@ class SchedulesMm:
                         """, (self.__horarios[0], self.__horarios[1], self.__horarios[2], self.__horarios[3]))
                         __banco__.get_banco.commit()
                         __banco__.get_banco.close()
-                        return f'Cadastrado os {quant_hor} horarios'
+                        return f'Cadastrados os {quant_hor} horarios'
                 else:
                     return 'Precisa cadastrar mais que um horario'
         except:
@@ -185,9 +185,9 @@ class SchedulesMm:
                 __cursor__.execute("""update sqlite_sequence SET seq = 0 where name = 'horarios';""")
                 __banco__.get_banco.commit()
                 __banco__.get_banco.close()
-                return 'Horario deletado com sucesso!'
+                return 'Horarios deletado com sucesso!'
             else:
-                return 'Não existe horario cadastrado'
+                return 'Não existe horarios cadastrados'
         except:
             return 'Ocorreu algum erro'
 
