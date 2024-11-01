@@ -145,7 +145,11 @@ def registration_user(email='', senha=''):
 
 
 def __start_loop__(utilizar=None, __times__=None, block=None):
-    # Pensar num jeito de fazer essa birosca que vc invetou funcioanar, cabeça de rola.
+
+    def rodar_schedules():
+        pass
+
+    # Pensar num jeito de fazer essa birosca que vc invetou funcioanar, cabeça de pica.
     if utilizar:
         email, senha, cord1, cord2 = User.select_user()
         __times__ = Usuarios.SchedulesMm.select_horario()
@@ -232,18 +236,11 @@ def format_schedules(horario):
             except ValueError:
                 return False
             else:
-                if type(first_num) is int and type(second_num) is int:
+                if isinstance(first_num, int) and isinstance(second_num, int):
                     if 1 <= first_num <= 23:
                         if 59 >= second_num >= 0:
                             return True
-                        else:
-                            return False
-                    else:
-                        return False
-                else:
-                    return False
-        else:
-            return False
+        return False
 
 
 if __name__ == '__main__':
