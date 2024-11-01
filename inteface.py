@@ -23,11 +23,10 @@ class Application(tk.Tk):
 
         font_principal = tk.font.Font(size=15, weight='bold')
 
-        principal_text = tk.Label(self, text='Ponto Automatico', font=font_principal)
+        principal_text = tk.Label(self, text='Ponto Automatico', font=font_principal, fg='cyan')
         principal_text.place(x=25, y=25, anchor='nw')
 
         self.info = principal_text
-        self.info.config(fg='cyan')
 
         self.current_frame = None
 
@@ -345,8 +344,8 @@ class StartNoTimesSaved(tk.Frame):
     @staticmethod
     def initial_times(h1, h2, h3, h4, info, master, var):
         hors = [h1.get(), h2.get(), h3.get(), h4.get()]
-        list_hors = [horario for horario in hors if horario != '']
-        format_validation = [Functions.format_schedules(hora) for hora in list_hors]
+        list_hors = [horario for horario in hors if horario != '' and len(horario) <= 5]
+        format_validation = (Functions.format_schedules(hora) for hora in list_hors)
         if all(format_validation):
             if len(list_hors) <= 1:
                 info.config(text='Por favor insira pelo o menos 2 horarios', fg='red')

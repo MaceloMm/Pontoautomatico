@@ -16,11 +16,7 @@ class Banco:
             create TABLE if not exists usuario (
             id integer primary key autoincrement,
             email text,
-            senha text,
-            x integer,
-            y integer,
-            x_2 integer,
-            y_2 integer)
+            senha text)
         """)
 
         cursor.execute('PRAGMA foreign_keys = ON')

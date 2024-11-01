@@ -1,6 +1,10 @@
 # _*_ coding: utf-8 _*_
 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import logging
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from selenium.common import ElementNotInteractableException
@@ -33,27 +37,25 @@ def final(funcao):
         keyboard.press('enter')
         keyboard.release('enter')
 
-    def brain(__email__, __password__, cords1, cords2, last_time_=None, var=None):
+    def brain(__email__, __password__, last_time_=None, var=None):
         if last_time_ is not None:
             if time.strftime("%H") == last_time_.split(':')[0]:
                 global ultimo_horario
-                funcao(__email__, __password__, cords1, cords2)
+                funcao(__email__, __password__)
                 time.sleep(4)
                 # whatsapp()
                 if var == 1:
                     os.system('rundll32.exe user32.dll,LockWorkStation')
                 ultimo_horario = False
             else:
-                funcao(__email__, __password__, cords1, cords2)
+                funcao(__email__, __password__)
         else:
-            funcao(__email__, __password__, cords1, cords2)
+            funcao(__email__, __password__)
     return brain
 
 
 @final
-def bater_ponto(__email__='', __password__='', cords1=None, cords2=None, last_time_=None, var=None):
-    cords1 = cords1 or {'x': 0, 'y': 0}
-    cords2 = cords2 or {'x': 0, 'y': 0}
+def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
     while True:
         try:
             keyboard.press('win')
@@ -90,58 +92,31 @@ def bater_ponto(__email__='', __password__='', cords1=None, cords2=None, last_ti
             break
     while True:
         try:
-            time.sleep(15)
-            pyautogui.click(x=cords1['x'], y=cords1['y'])
-            time.sleep(3)
-            pyautogui.click(x=cords2['x'], y=cords2['y'])
+            iframe = WebDriverWait(navegador, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'iframe')))
+            navegador.switch_to.frame(iframe)
             time.sleep(5)
-            print(f'ponto batido com sucesso')
-            with open('log.txt', 'a') as arquivo:
-                arquivo.write(f'Ponto batido as {datetime.datetime.today()}\n')
-        except pyautogui.FailSafeException:
-            pass
-        except:
+            WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
+                (By.XPATH, '//*[@id="bodyApp"]/div/div/div/div/div/div[2]/div/div[2]/div[2]/button'))).click()
+            time.sleep(5)
+            WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
+                (By.XPATH, '//*[@id="bodyApp"]/div[3]/div[7]/div/button'))).click()
+        except (ElementNotInteractableException, selenium.common.NoSuchWindowException):
             with open('log_ERRO.txt', 'a') as file:
                 file.write('Ocorreu um erro ao bater o ponto')
         else:
-            break
+            text = navegador.find_element(By.XPATH, '//*[@id="bodyApp"]/div[3]/h2').text
+            if text.lower() == 'Marcação realizada com sucesso.'.lower():
+                print(f'ponto batido com sucesso')
+                with open('log.txt', 'a') as arquivo:
+                    arquivo.write(f'Ponto batido as {datetime.datetime.today()}\n')
+            else:
+                pass
 
 
 def registration_user(email='', senha=''):
-    try:
-        servico = Service(ChromeDriverManager().install())
-        navegador = webdriver.Chrome(service=servico)
-        navegador.get('https://login.lg.com.br/login/bluke_edeploy')
-        time.sleep(3)
-        navegador.find_element('xpath', '//*[@id="Login"]').send_keys(email)
-        navegador.find_element('xpath', '//*[@id="form0"]/div[3]/p/button').click()
-        time.sleep(1)
-        navegador.find_element('xpath', '//*[@id="Senha"]').send_keys(senha)
-        navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
-        time.sleep(10)
-    except (ElementNotInteractableException, selenium.common.NoSuchWindowException,
-            selenium.common.exceptions.NoSuchWindowException) as err:
-        with open('log_ERRO.txt', 'a') as arquivo:
-            arquivo.write(f'ERROR: {err}\n')
-    else:
-        try:
-            navegador.find_element('xpath',
-                              '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
-        except:
-            navegador.find_element('xpath',
-                                   '//*[@id="app"]/div/section/section/div[1]/div'
-                                   '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
-        messagebox.showinfo('Importante!', 'Clique em "OK" e deixe o mouse em cima do botão "Marca Ponto"')
-        time.sleep(6)
-        positions = pyautogui.position()
-        messagebox.showinfo('Importante!', 'Clique em "OK"'
-                                           '\nClique no botão "Marca ponto",'
-                                           '\ne deixe o mouse em cima do botão confirma')
-        time.sleep(6)
-        positions2 = pyautogui.position()
-        usuario = User(email, senha, positions[0], positions[1], positions2[0], positions2[1])
-        resultado = usuario.insert_user()
-        return resultado
+    usuario = User(email, senha)
+    resultado = usuario.insert_user()
+    return resultado
 
 
 def __start_loop__(utilizar=None, __times__=None, block=None):
@@ -151,35 +126,32 @@ def __start_loop__(utilizar=None, __times__=None, block=None):
 
     # Pensar num jeito de fazer essa birosca que vc invetou funcioanar, cabeça de pica.
     if utilizar:
-        email, senha, cord1, cord2 = User.select_user()
+        email, senha = User.select_user()
         __times__ = Usuarios.SchedulesMm.select_horario()
         __times__ = [h for h in __times__ if h is not None]
         last_time = __times__[len(__times__) - 1]
 
         if len(__times__) == 2:
             schedule.every().day.at(__times__[0]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[1]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time, var=block))
+                lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block))
         elif len(__times__) == 3:
             schedule.every().day.at(__times__[0]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[1]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[2]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time, var=block))
+                lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block))
         elif len(__times__) == 4:
             schedule.every().day.at(__times__[0]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[1]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[2]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[3]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time, var=block))
+                lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block))
         else:
             return 'Não existe horarios validos cadastrados'
         while ultimo_horario:
@@ -188,33 +160,30 @@ def __start_loop__(utilizar=None, __times__=None, block=None):
         return 'Terminei o dia!'
     else:
         # Programar essa parte depois cabeça de pika
-        email, senha, cord1, cord2 = User.select_user()
+        email, senha = User.select_user()
         __times__ = [h for h in __times__ if h != '']
         last_time = __times__[len(__times__) - 1]
         if len(__times__) == 2:
             schedule.every().day.at(__times__[0]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[1]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time, var=block))
+                lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block))
         elif len(__times__) == 3:
             schedule.every().day.at(__times__[0]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[1]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[2]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time, var=block))
+                lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block))
         elif len(__times__) == 4:
             schedule.every().day.at(__times__[0]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[1]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[2]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2))
+                lambda: bater_ponto(__email__=email, __password__=senha))
             schedule.every().day.at(__times__[3]).do(
-                lambda: bater_ponto(__email__=email, __password__=senha, cords1=cord1, cords2=cord2,
-                                    last_time_=last_time, var=block))
+                lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block))
         else:
             return 'Não existe horarios validos cadastrados'
         while ultimo_horario:
