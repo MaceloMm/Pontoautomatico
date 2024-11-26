@@ -74,6 +74,7 @@ def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
             navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
             time.sleep(15)
             try:
+                time.sleep(10)
                 navegador.find_element('xpath',
                                        '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
             except:
@@ -85,32 +86,31 @@ def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
                     pass
         except (ElementNotInteractableException, selenium.common.NoSuchWindowException) as err:
             with open('log.txt', 'a') as arquivo:
-                arquivo.write(f'ERROR: Ocorreu um ERRO!\n')
+                arquivo.write(f'{datetime.datetime.now()}ERROR: Ocorreu um ERRO!\n')
             with open('log_ERRO.txt', 'a') as arquivo:
-                arquivo.write(f'ERROR: {err}\n')
+                arquivo.write(f'{datetime.datetime.now()}ERROR: {err}\n')
         else:
             break
     while True:
-        try:
-            iframe = WebDriverWait(navegador, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'iframe')))
-            navegador.switch_to.frame(iframe)
-            time.sleep(5)
-            WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
-                (By.XPATH, '//*[@id="bodyApp"]/div/div/div/div/div/div[2]/div/div[2]/div[2]/button'))).click()
-            time.sleep(5)
-            WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
-                (By.XPATH, '//*[@id="bodyApp"]/div[3]/div[7]/div/button'))).click()
-        except (ElementNotInteractableException, selenium.common.NoSuchWindowException):
-            with open('log_ERRO.txt', 'a') as file:
-                file.write('Ocorreu um erro ao bater o ponto')
-        else:
-            text = navegador.find_element(By.XPATH, '//*[@id="bodyApp"]/div[3]/h2').text
-            if text.lower() == 'Marcação realizada com sucesso.'.lower():
-                print(f'ponto batido com sucesso')
-                with open('log.txt', 'a') as arquivo:
-                    arquivo.write(f'Ponto batido as {datetime.datetime.today()}\n')
+            try:
+                iframe = WebDriverWait(navegador, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'iframe')))
+                navegador.switch_to.frame(iframe)
+                time.sleep(5)
+                WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
+                    (By.XPATH, '//*[@id="bodyApp"]/div/div/div/div/div/div[2]/div/div[2]/div[2]/button'))).click()
+                time.sleep(5)
+                WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
+                    (By.XPATH, '//*[@id="bodyApp"]/div[3]/div[7]/div/button'))).click()
+            except (ElementNotInteractableException, selenium.common.NoSuchWindowException):
+                with open('log_ERRO.txt', 'a') as file:
+                    file.write(f'{datetime.datetime.now()}Ocorreu um erro ao bater o ponto')
             else:
-                pass
+                texto = navegador.find_element(by=By.XPATH, value='//*[@id="bodyApp"]/div[3]/h2').text
+                if texto.lower() == 'Marcação realizada com sucesso.'.lower():
+                    print(f'ponto batido com sucesso')
+                    with open('log.txt', 'a') as arquivo:
+                        arquivo.write(f'Ponto batido as {datetime.datetime.today()}\n')
+                    break
 
 
 def registration_user(email='', senha=''):

@@ -280,7 +280,7 @@ class StartScript(tk.Frame):
     def horarios_salvos(info):
         validation = SchedulesMm.validation_horarios()
         if validation:
-            info.config(text='Estou rodando', fg='green', weight='bold')
+            info.config(text='Estou rodando', fg='green')
             info.update()
             msg = Functions.__start_loop__(utilizar=True)
             info.config(text=msg, fg='white')
