@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import logging
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
-from selenium.common import ElementNotInteractableException
+from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException, TimeoutException
 import selenium
 import schedule
 import time
@@ -16,7 +16,7 @@ import datetime
 import keyboard
 from tkinter import messagebox
 import os
-
+import threading
 import Usuarios
 from Usuarios import User
 
@@ -56,61 +56,76 @@ def final(funcao):
 
 @final
 def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
-    while True:
+    sucess = False
+    while not sucess:
         try:
-            keyboard.press('win')
-            keyboard.press('d')
-            keyboard.release('win')
-            keyboard.release('d')
-            time.sleep(2)
+            # Configurações do navegador
             servico = Service(ChromeDriverManager().install())
             navegador = webdriver.Chrome(service=servico)
             navegador.get('https://login.lg.com.br/login/bluke_edeploy')
-            time.sleep(3)
-            navegador.find_element('xpath', '//*[@id="Login"]').send_keys(__email__)
-            navegador.find_element('xpath', '//*[@id="form0"]/div[3]/p/button').click()
-            time.sleep(1)
-            navegador.find_element('xpath', '//*[@id="Senha"]').send_keys(__password__)
-            navegador.find_element('xpath', '//*[@id="form0"]/div[3]').click()
-            time.sleep(15)
-            try:
+
+            # login
+            WebDriverWait(navegador, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="Login"]'))
+            ).send_keys(__email__)
+
+            WebDriverWait(navegador, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="form0"]/div[3]/p/button'))
+            ).click()
+
+            WebDriverWait(navegador, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="Senha"]'))
+            ).send_keys(__password__)
+
+            WebDriverWait(navegador, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="form0"]/div[3]'))
+            ).click()
+            if navegador.get_window_size()["width"] >= 1265 and navegador.get_window_size()["height"] >= 1020:
                 time.sleep(10)
-                navegador.find_element('xpath',
-                                       '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
-            except:
-                try:
-                    navegador.find_element('xpath',
-                                           '//*[@id="app"]/div/section/section/div[1]/div'
-                                           '[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div').click()
-                except:
-                    pass
-        except (ElementNotInteractableException, selenium.common.NoSuchWindowException) as err:
+                navegador.find_element(By.XPATH, '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+            else:
+                time.sleep(10)
+                navegador.find_element(By.XPATH, '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div')
+
+            WebDriverWait(navegador, 15).until(
+                EC.presence_of_element_located((By.TAG_NAME, 'iframe'))
+            )
+            iframe = navegador.find_element(By.TAG_NAME, 'iframe')
+            navegador.switch_to.frame(iframe)
+            time.sleep(10)
+            WebDriverWait(navegador, 10).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, '//*[@id="bodyApp"]/div/div/div/div/div/div[2]/div/div[2]/div[2]/button')
+                )
+            ).click()
+            time.sleep(10)
+            WebDriverWait(navegador, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="bodyApp"]/div[3]/div[7]/div/button'))
+            ).click()
+            time.sleep(5)
+            texto = WebDriverWait(navegador, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="bodyApp"]/div[3]/h2'))
+            ).text
+            if texto.lower() == 'Marcação realizada com sucesso.'.lower():
+                print(f'ponto batido com sucesso')
+                with open('log.txt', 'a') as arquivo:
+                    arquivo.write(f'Ponto batido as {datetime.datetime.today()}\n')
+                sucess = True
+
+        except (ElementNotInteractableException, NoSuchElementException, TimeoutException) as err:
             with open('log.txt', 'a') as arquivo:
                 arquivo.write(f'{datetime.datetime.now()}ERROR: Ocorreu um ERRO!\n')
             with open('log_ERRO.txt', 'a') as arquivo:
                 arquivo.write(f'{datetime.datetime.now()}ERROR: {err}\n')
-        else:
-            break
-    while True:
+
+        finally:
             try:
-                iframe = WebDriverWait(navegador, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'iframe')))
-                navegador.switch_to.frame(iframe)
-                time.sleep(5)
-                WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH, '//*[@id="bodyApp"]/div/div/div/div/div/div[2]/div/div[2]/div[2]/button'))).click()
-                time.sleep(5)
-                WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH, '//*[@id="bodyApp"]/div[3]/div[7]/div/button'))).click()
-            except (ElementNotInteractableException, selenium.common.NoSuchWindowException):
-                with open('log_ERRO.txt', 'a') as file:
-                    file.write(f'{datetime.datetime.now()}Ocorreu um erro ao bater o ponto')
-            else:
-                texto = navegador.find_element(by=By.XPATH, value='//*[@id="bodyApp"]/div[3]/h2').text
-                if texto.lower() == 'Marcação realizada com sucesso.'.lower():
-                    print(f'ponto batido com sucesso')
-                    with open('log.txt', 'a') as arquivo:
-                        arquivo.write(f'Ponto batido as {datetime.datetime.today()}\n')
-                    break
+                navegador.quit()
+            except:
+                pass
+            if not sucess:
+                print("Tentando novamente em 10 segundos....")
+                time.sleep(10)
 
 
 def registration_user(email='', senha=''):
@@ -120,17 +135,34 @@ def registration_user(email='', senha=''):
 
 
 def __start_loop__(utilizar=None, __times__=None, block=None):
-
     def rodar_schedules():
-        pass
+        while True:
+            print(f'{datetime.datetime.now()} - estou rodando...')
+            schedule.run_pending()
+            time.sleep(1)
+
+    def rodar_loops(__times__=__times__):
+        last_time = __times__[len(__times__) - 1]
+        email, senha = User.select_user()
+        for time in __times__[:-1]:
+            schedule.every().day.at(time).do(
+                lambda: bater_ponto(__email__=email, __password__=senha)
+            )
+        schedule.every().day.at(last_time).do(
+            lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block)
+        )
 
     # Pensar num jeito de fazer essa birosca que vc invetou funcioanar, cabeça de pica.
     if utilizar:
-        email, senha = User.select_user()
         __times__ = Usuarios.SchedulesMm.select_horario()
         __times__ = [h for h in __times__ if h is not None]
-        last_time = __times__[len(__times__) - 1]
 
+        rodar_loops(__times__)
+
+        thread = threading.Thread(target=rodar_schedules, daemon=True)
+        thread.start()
+
+        """
         if len(__times__) == 2:
             schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha))
@@ -154,15 +186,18 @@ def __start_loop__(utilizar=None, __times__=None, block=None):
                 lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block))
         else:
             return 'Não existe horarios validos cadastrados'
-        while ultimo_horario:
-            schedule.run_pending()
-            time.sleep(1)
+        thread = threading.Thread(target=rodar_schedules(), daemon=True)
+        thread.start()
         return 'Terminei o dia!'
+        """
     else:
         # Programar essa parte depois cabeça de pika
-        email, senha = User.select_user()
         __times__ = [h for h in __times__ if h != '']
-        last_time = __times__[len(__times__) - 1]
+
+        rodar_loops(__times__)
+        thread = threading.Thread(target=rodar_schedules, daemon=True)
+        thread.start()
+        """
         if len(__times__) == 2:
             schedule.every().day.at(__times__[0]).do(
                 lambda: bater_ponto(__email__=email, __password__=senha))
@@ -186,10 +221,10 @@ def __start_loop__(utilizar=None, __times__=None, block=None):
                 lambda: bater_ponto(__email__=email, __password__=senha, last_time_=last_time, var=block))
         else:
             return 'Não existe horarios validos cadastrados'
-        while ultimo_horario:
-            schedule.run_pending()
-            time.sleep(1)
+        thread = threading.Thread(target=rodar_schedules(), daemon=True)
+        thread.start()
         return 'Terminei o dia'
+        """
 
 
 def format_schedules(horario):
