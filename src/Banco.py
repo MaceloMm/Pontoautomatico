@@ -1,12 +1,21 @@
 # _*_ coding: utf-8 _*_
 
 import sqlite3
+import os, sys
+
+
+def get_resource_path(relative_path):
+    """Retorna o caminho correto do arquivo, dentro ou fora do executável."""
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
+    return os.path.join(base_path, relative_path)
 
 
 class Banco:
 
     def __init__(self):
-        self.__conexao = sqlite3.connect('src/cadastros.db')
+        db_path = get_resource_path(r'src\cadastros.db')
+        print(db_path)
+        self.__conexao = sqlite3.connect(db_path)
         self.create_table()
 
     def create_table(self):

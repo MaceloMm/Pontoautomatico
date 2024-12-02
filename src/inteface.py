@@ -7,7 +7,7 @@ import src.Functions as Functions
 import time
 from src.Usuarios import SchedulesMm
 from tkinter import messagebox
-from src.Functions import get_resource_path
+from src.Banco import get_resource_path
 
 
 class Application(tk.Tk):
@@ -19,7 +19,7 @@ class Application(tk.Tk):
         self.geometry("600x450")
         self.attributes("-topmost", True)
 
-        image_path = get_resource_path('src\imagens\check.png')
+        image_path = get_resource_path(r'src\imagens\check.png')
         icone = tk.PhotoImage(file=image_path)
         self.iconphoto(False, icone)
 

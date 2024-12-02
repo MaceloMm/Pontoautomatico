@@ -19,7 +19,6 @@ import os
 import threading
 import src.Usuarios as Usuarios
 from src.Usuarios import User
-import sys
 
 stop_thread = threading.Event()
 ultimo_horario = True
@@ -255,12 +254,6 @@ def format_schedules(horario):
                         if 59 >= second_num >= 0:
                             return True
         return False
-
-
-def get_resource_path(relative_path):
-    """Retorna o caminho correto do arquivo, dentro ou fora do executável."""
-    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
-    return os.path.join(base_path, relative_path)
 
 
 if __name__ == '__main__':
