@@ -14,7 +14,6 @@ class Banco:
 
     def __init__(self):
         db_path = get_resource_path(r'src\cadastros.db')
-        print(db_path)
         self.__conexao = sqlite3.connect(db_path)
         self.create_table()
 

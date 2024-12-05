@@ -81,12 +81,14 @@ def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, '//*[@id="form0"]/div[3]'))
             ).click()
-            if navegador.get_window_size()["width"] >= 1265 and navegador.get_window_size()["height"] >= 1020:
-                time.sleep(10)
-                navegador.find_element(By.XPATH, '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
-            else:
-                time.sleep(10)
-                navegador.find_element(By.XPATH, '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[2]/div/div/div/div/div[1]/div/div')
+            navegador.maximize_window()
+            #if navegador.get_window_size()["width"] >= 1265 and navegador.get_window_size()["height"] >= 1020:
+            #    time.sleep(10)
+            #    navegador.find_element(By.XPATH, '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+            #else:
+            time.sleep(10)
+            navegador.find_element(By.XPATH, '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
+            input()
 
             WebDriverWait(navegador, 15).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'iframe'))

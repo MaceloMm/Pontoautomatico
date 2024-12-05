@@ -208,11 +208,11 @@ if __name__ == '__main__':
     pass
     #macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
     #print(macelo.insert_user())
-    #email, senha, cord1, cord2 = User.select_user()
-    #print(email, senha, cord1, cord2)
+    #email, senha = User.select_user()
+    #print(email, senha)
     #horario = Horario(['12:00', '18:00', '19:00', '21:00'])
     #print(horario.delete_horarios())
     #print(horario.insert_horarios())
-    print(SchedulesMm.select_horario())
+    #print(SchedulesMm.select_horario())
     #print(msg)
 

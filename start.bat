@@ -1,2 +1,2 @@
-python ponto.py
+python3 ponto.py
 pause
