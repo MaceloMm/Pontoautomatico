@@ -4,11 +4,13 @@ import sqlite3
 import os, sys, shutil
 
 
+def get_resource_path(relative_path):
+    """Retorna o caminho correto do arquivo, dentro ou fora do executável."""
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
+    return os.path.join(base_path, relative_path)
+
+
 def get_persistent_db_path():
-    def get_resource_path(relative_path):
-        """Retorna o caminho correto do arquivo, dentro ou fora do executável."""
-        base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
-        return os.path.join(base_path, relative_path)
 
     """Retorna o caminho persistente do banco de dados no sistema do usuário."""
     # Diretório persistente no home do usuário
