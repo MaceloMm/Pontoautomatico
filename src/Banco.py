@@ -14,7 +14,7 @@ def get_persistent_db_path():
 
     """Retorna o caminho persistente do banco de dados no sistema do usuário."""
     # Diretório persistente no home do usuário
-    persistent_dir = os.path.join(os.path.expanduser("~"), ".meu_app")
+    persistent_dir = os.path.join(os.path.expanduser("~"), ".ponto_automatico")
     os.makedirs(persistent_dir, exist_ok=True)  # Cria o diretório, se necessário
 
     db_file = "cadastros.db"
@@ -24,9 +24,58 @@ def get_persistent_db_path():
     bundled_path = get_resource_path(os.path.join(db_file))
 
     # Copia o banco para o local persistente se ele não existir
-    if not os.path.exists(persistent_path):
-        shutil.copy(bundled_path, persistent_path)
-
+    if os.path.exists(persistent_path):
+        try:
+            shutil.copy(bundled_path, persistent_path)
+        except FileNotFoundError:
+            with sqlite3.connect(persistent_path) as conn:
+                cursor = conn.cursor()
+                # Cria tabelas básicas para evitar erros futuros
+                cursor.execute("""
+                                    CREATE TABLE IF NOT EXISTS usuario (
+                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        email TEXT,
+                                        senha TEXT
+                                    )
+                                """)
+                cursor.execute("""
+                                    CREATE TABLE IF NOT EXISTS horarios (
+                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        horario1 TEXT,
+                                        horario2 TEXT,
+                                        horario3 TEXT,
+                                        horario4 TEXT,
+                                        user_id INTEGER,
+                                        FOREIGN KEY (user_id) REFERENCES usuario(id)
+                                        ON DELETE CASCADE
+                                        ON UPDATE NO ACTION
+                                    )
+                                """)
+                conn.commit()
+    if not os.path.exists(bundled_path):
+        with sqlite3.connect(bundled_path) as db:
+            cursor = db.cursor()
+            cursor.execute("""
+                                    CREATE TABLE IF NOT EXISTS usuario (
+                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        email TEXT,
+                                        senha TEXT
+                                    )
+                                """)
+            cursor.execute("""
+                                    CREATE TABLE IF NOT EXISTS horarios (
+                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        horario1 TEXT,
+                                        horario2 TEXT,
+                                        horario3 TEXT,
+                                        horario4 TEXT,
+                                        user_id INTEGER,
+                                        FOREIGN KEY (user_id) REFERENCES usuario(id)
+                                        ON DELETE CASCADE
+                                        ON UPDATE NO ACTION
+                                    )
+                                """)
+            conn.commit()
     return persistent_path
 
 
@@ -34,6 +83,7 @@ class Banco:
 
     def __init__(self):
         db_path = get_persistent_db_path()
+        print(db_path)
         self.__conexao = sqlite3.connect(db_path)
         self.create_table()
 
