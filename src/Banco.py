@@ -24,7 +24,7 @@ def get_persistent_db_path():
     bundled_path = get_resource_path(os.path.join(db_file))
 
     # Copia o banco para o local persistente se ele não existir
-    if os.path.exists(persistent_path):
+    if not os.path.exists(persistent_path):
         try:
             shutil.copy(bundled_path, persistent_path)
         except FileNotFoundError:
@@ -52,9 +52,9 @@ def get_persistent_db_path():
                                     )
                                 """)
                 conn.commit()
-    if not os.path.exists(bundled_path):
-        with sqlite3.connect(bundled_path) as db:
-            cursor = db.cursor()
+    elif not os.path.exists(bundled_path):
+        with sqlite3.connect(bundled_path) as conn:
+            cursor = conn.cursor()
             cursor.execute("""
                                     CREATE TABLE IF NOT EXISTS usuario (
                                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,18 +63,18 @@ def get_persistent_db_path():
                                     )
                                 """)
             cursor.execute("""
-                                    CREATE TABLE IF NOT EXISTS horarios (
-                                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                        horario1 TEXT,
-                                        horario2 TEXT,
-                                        horario3 TEXT,
-                                        horario4 TEXT,
-                                        user_id INTEGER,
-                                        FOREIGN KEY (user_id) REFERENCES usuario(id)
-                                        ON DELETE CASCADE
-                                        ON UPDATE NO ACTION
-                                    )
-                                """)
+            CREATE TABLE IF NOT EXISTS horarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            horario1 TEXT,
+            horario2 TEXT,
+            horario3 TEXT,
+            horario4 TEXT,
+            user_id INTEGER,
+            FOREIGN KEY (user_id) REFERENCES usuario(id)
+            ON DELETE CASCADE
+            ON UPDATE NO ACTION
+            )
+            """)
             conn.commit()
     return persistent_path
 
