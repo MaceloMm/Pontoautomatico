@@ -83,7 +83,6 @@ class Banco:
 
     def __init__(self):
         db_path = get_persistent_db_path()
-        print(db_path)
         self.__conexao = sqlite3.connect(db_path)
         self.create_table()
 

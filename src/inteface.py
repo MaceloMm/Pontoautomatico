@@ -70,7 +70,7 @@ class FirstScreen(tk.Frame):
         label.grid(column=0, row=0, columnspan=1, pady=8, sticky='e')
 
         label_info = tk.Label(self, text='', font=font2)
-        label_info.grid(column=0, row=4, pady=10, columnspan=1)
+        label_info.grid(column=0, row=7, pady=10, columnspan=1)
 
         buttom_cadastro = tk.Button(self, text='Cadastro usuario',
                                     command=lambda: master.show_frame(UserInterface, 'Cadastro de Usuario'),
@@ -86,6 +86,11 @@ class FirstScreen(tk.Frame):
                                     , width=20, height=2, font=font2)
         buttom_horarios.grid(column=0, row=3, pady=6)
 
+        button_teste = tk.Button(self, text='Realizar teste', width=20, height=2, font=font2,
+                                 command=lambda: teste_now(label_info)
+                                 )
+        button_teste.grid(column=0, row=4, pady=6)
+
         # Ajuste a proporção das colunas para expandir conforme necessário
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
@@ -94,6 +99,15 @@ class FirstScreen(tk.Frame):
         # Ajuste a proporção das linhas para expandir conforme necessário
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
+
+        def teste_now(info):
+            if User.validation():
+                sucess = Functions.teste_bater_ponto()
+                if sucess:
+                    info.config(text='Teste feito com sucesso', fg='green')
+            else:
+                info.config(text='Não existe usuario cadastrado', fg='red')
+
 
 
 # Tela das opções de cadastro de usuario

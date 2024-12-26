@@ -38,10 +38,11 @@ def final(funcao):
         keyboard.press('enter')
         keyboard.release('enter')
 
-    def brain(__email__, __password__, last_time_=None, var=None):
+    def brain(__email__, __password__, last_time_=None, var=None, teste=False):
         if last_time_ is not None:
             if time.strftime("%H") == last_time_.split(':')[0]:
                 global ultimo_horario
+                print(teste)
                 funcao(__email__, __password__)
                 time.sleep(4)
                 # whatsapp()
@@ -49,14 +50,14 @@ def final(funcao):
                     os.system('rundll32.exe user32.dll,LockWorkStation')
                 ultimo_horario = False
             else:
-                funcao(__email__, __password__)
+                funcao(__email__, __password__, teste=teste)
         else:
-            funcao(__email__, __password__)
+            funcao(__email__, __password__, teste=teste)
     return brain
 
 
 @final
-def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
+def bater_ponto(__email__='', __password__='', last_time_=None, var=None, teste=False):
     sucess = False
     while not sucess:
         try:
@@ -64,6 +65,8 @@ def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
             servico = Service(ChromeDriverManager().install())
             navegador = webdriver.Chrome(service=servico)
             navegador.get('https://login.lg.com.br/login/bluke_edeploy')
+
+            navegador.maximize_window()
 
             # login
             WebDriverWait(navegador, 10).until(
@@ -81,14 +84,12 @@ def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, '//*[@id="form0"]/div[3]'))
             ).click()
-            navegador.maximize_window()
             #if navegador.get_window_size()["width"] >= 1265 and navegador.get_window_size()["height"] >= 1020:
             #    time.sleep(10)
             #    navegador.find_element(By.XPATH, '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
             #else:
             time.sleep(10)
             navegador.find_element(By.XPATH, '//*[@id="app"]/div/section/section/div[1]/div[2]/div/div/div/div[1]/div[1]').click()
-            input()
 
             WebDriverWait(navegador, 15).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'iframe'))
@@ -96,31 +97,36 @@ def bater_ponto(__email__='', __password__='', last_time_=None, var=None):
             iframe = navegador.find_element(By.TAG_NAME, 'iframe')
             navegador.switch_to.frame(iframe)
             time.sleep(10)
-            WebDriverWait(navegador, 10).until(
-                EC.element_to_be_clickable(
-                    (By.XPATH, '//*[@id="bodyApp"]/div/div/div/div/div/div[2]/div/div[2]/div[2]/button')
-                )
-            ).click()
-            time.sleep(10)
-            WebDriverWait(navegador, 10).until(
-                EC.element_to_be_clickable((By.XPATH, '//*[@id="bodyApp"]/div[3]/div[7]/div/button'))
-            ).click()
-            time.sleep(5)
-            texto = WebDriverWait(navegador, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="bodyApp"]/div[3]/h2'))
-            ).text
-            if texto.lower() == 'Marcação realizada com sucesso.'.lower():
-                print(f'ponto batido com sucesso')
-                with open('log.txt', 'a') as arquivo:
-                    arquivo.write(f'Ponto batido as {datetime.datetime.today()}\n')
+            if not teste:
+                WebDriverWait(navegador, 10).until(
+                    EC.element_to_be_clickable(
+                        (By.XPATH, '//*[@id="bodyApp"]/div/div/div/div/div/div[2]/div/div[2]/div[2]/button')
+                    )
+                ).click()
+                time.sleep(10)
+                WebDriverWait(navegador, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, '//*[@id="bodyApp"]/div[3]/div[7]/div/button'))
+                ).click()
+                time.sleep(5)
+                texto = WebDriverWait(navegador, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="bodyApp"]/div[3]/h2'))
+                ).text
+                if texto.lower() == 'Marcação realizada com sucesso.'.lower():
+                    print(f'ponto batido com sucesso')
+                    with open('log.txt', 'a') as arquivo:
+                        arquivo.write(f'Ponto batido as {datetime.datetime.today()}\n')
+                    sucess = True
+            if teste:
+                messagebox.showinfo('Info', 'Teste realizado')
                 sucess = True
 
-        except (ElementNotInteractableException, NoSuchElementException, TimeoutException) as err:
+        except (ElementNotInteractableException, NoSuchElementException, TimeoutException,) as err:
             with open('log.txt', 'a') as arquivo:
                 arquivo.write(f'{datetime.datetime.now()}ERROR: Ocorreu um ERRO!\n')
             with open('log_ERRO.txt', 'a') as arquivo:
                 arquivo.write(f'{datetime.datetime.now()}ERROR: {err}\n')
-
+        except Exception as err:
+            messagebox.showerror('alerta', err)
         finally:
             try:
                 navegador.quit()
@@ -258,5 +264,13 @@ def format_schedules(horario):
         return False
 
 
+def teste_bater_ponto():
+    email, senha = User.select_user()
+    thread = threading.Thread(target=lambda: bater_ponto(email, senha, teste=True), daemon=True)
+    thread.start()
+    return True
+
+
+
 if __name__ == '__main__':
-    format_schedules('09:16')
+    pass
