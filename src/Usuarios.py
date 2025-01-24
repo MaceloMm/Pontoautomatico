@@ -1,6 +1,6 @@
 # _*_ coding: utf-8 _*_
 
-from Banco import Banco
+from src.Banco import Banco
 
 
 class User:
@@ -115,9 +115,9 @@ class SchedulesMm:
         try:
             __cursor__ = __banco__.get_banco.cursor()
             cadastros = len(list(__cursor__.execute("""select horario1, horario2, horario3, horario4 from horarios 
-                                                    where id = 1; """))[0])
-        except:
-            print('dei um erro')
+                                                    where id = 1;"""))[0])
+        except Exception as err:
+            print(f'dei um erro\n{err}')
         else:
             if cadastros != 0:
                 return True
@@ -208,11 +208,11 @@ if __name__ == '__main__':
     pass
     #macelo = User('macelo.matos@e-deploy.com.br', '784512@Ma', 641, 628, 952, 697)
     #print(macelo.insert_user())
-    #email, senha, cord1, cord2 = User.select_user()
-    #print(email, senha, cord1, cord2)
+    #email, senha = User.select_user()
+    #print(email, senha)
     #horario = Horario(['12:00', '18:00', '19:00', '21:00'])
     #print(horario.delete_horarios())
     #print(horario.insert_horarios())
-    print(SchedulesMm.select_horario())
+    #print(SchedulesMm.select_horario())
     #print(msg)
 

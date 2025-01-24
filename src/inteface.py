@@ -2,11 +2,12 @@
 
 import tkinter as tk
 from ttkbootstrap import Style
-from Usuarios import User
-import Functions
+from src.Usuarios import User
+import src.Functions as Functions
 import time
-from Usuarios import SchedulesMm
+from src.Usuarios import SchedulesMm
 from tkinter import messagebox
+from src.Banco import get_resource_path
 
 
 class Application(tk.Tk):
@@ -18,7 +19,8 @@ class Application(tk.Tk):
         self.geometry("600x450")
         self.attributes("-topmost", True)
 
-        icone = tk.PhotoImage(file="imagens\\check.png")
+        image_path = get_resource_path(r'src\imagens\check.png')
+        icone = tk.PhotoImage(file=image_path)
         self.iconphoto(False, icone)
 
         font_principal = tk.font.Font(size=15, weight='bold')
@@ -68,7 +70,7 @@ class FirstScreen(tk.Frame):
         label.grid(column=0, row=0, columnspan=1, pady=8, sticky='e')
 
         label_info = tk.Label(self, text='', font=font2)
-        label_info.grid(column=0, row=4, pady=10, columnspan=1)
+        label_info.grid(column=0, row=7, pady=10, columnspan=1)
 
         buttom_cadastro = tk.Button(self, text='Cadastro usuario',
                                     command=lambda: master.show_frame(UserInterface, 'Cadastro de Usuario'),
@@ -84,6 +86,11 @@ class FirstScreen(tk.Frame):
                                     , width=20, height=2, font=font2)
         buttom_horarios.grid(column=0, row=3, pady=6)
 
+        button_teste = tk.Button(self, text='Realizar teste', width=20, height=2, font=font2,
+                                 command=lambda: teste_now(label_info)
+                                 )
+        button_teste.grid(column=0, row=4, pady=6)
+
         # Ajuste a proporção das colunas para expandir conforme necessário
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
@@ -92,6 +99,15 @@ class FirstScreen(tk.Frame):
         # Ajuste a proporção das linhas para expandir conforme necessário
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
+
+        def teste_now(info):
+            if User.validation():
+                sucess = Functions.teste_bater_ponto()
+                if sucess:
+                    info.config(text='Teste feito com sucesso', fg='green')
+            else:
+                info.config(text='Não existe usuario cadastrado', fg='red')
+
 
 
 # Tela das opções de cadastro de usuario
@@ -254,7 +270,7 @@ class StartScript(tk.Frame):
         info.grid(column=0, row=6, pady=6, sticky='we', columnspan=2)
 
         button_horarios = tk.Button(self, text='Horarios salvos', width=12, height=2, font=font2,
-                                    command=lambda: StartScript.horarios_salvos(info))
+                                    command=lambda: StartScript.horarios_salvos(master))
         button_horarios.grid(column=0, row=1, pady=10, padx=5, sticky='we', columnspan=2)
 
         button_horariosp = tk.Button(self, text='Definir horario', width=12, height=2, font=font2,
@@ -277,13 +293,11 @@ class StartScript(tk.Frame):
         self.grid_rowconfigure(3, weight=1)
 
     @staticmethod
-    def horarios_salvos(info):
+    def horarios_salvos(master):
         validation = SchedulesMm.validation_horarios()
         if validation:
-            info.config(text='Estou rodando', fg='green')
-            info.update()
-            msg = Functions.__start_loop__(utilizar=True)
-            info.config(text=msg, fg='white')
+            Functions.__start_loop__(utilizar=True, block=1)
+            master.show_frame(CancelScript)
         else:
             messagebox.showerror('Info!', 'Não existe horarios salvos')
 
@@ -350,14 +364,41 @@ class StartNoTimesSaved(tk.Frame):
             if len(list_hors) <= 1:
                 info.config(text='Por favor insira pelo o menos 2 horarios', fg='red')
             else:
-                info.config(text='Estou rodando', fg='green')
-                info.update()
                 msg = Functions.__start_loop__(utilizar=False, __times__=list_hors, block=var)
                 info.config(text=msg, fg='white')
                 time.sleep(2)
-                master.show_frame(StartScript)
+                master.show_frame(CancelScript)
         else:
             info.config(text='Horaios não estão no formado 00:00', fg='red')
+
+
+class CancelScript(tk.Frame):
+
+    def __init__(self, master):
+        super().__init__(master)
+
+        font = tk.font.Font(weight='bold', size=11)
+        font2 = tk.font.Font(weight='bold', size=10)
+
+        label = tk.Label(self, text='Clique no botão abaixo para parar o Script', font=font)
+        label.grid(column=0, row=0, pady=12)
+
+        button_back = tk.Button(
+            self, text='Cancelar', font=font2, command=lambda: CancelScript.stop(master, label_info), width=12, height=1
+        )
+        button_back.grid(column=0, row=1, pady=12)
+
+        label_info = tk.Label(self, text='Sistema está sendo executado...', font=font)
+        label_info.grid(column=0, row=2, pady=12)
+        label_info.config(fg='green')
+
+    @staticmethod
+    def stop(master, info):
+        Functions.stop_script()
+        info.config(text='Script Interrompido...', fg='red')
+        info.update()
+        time.sleep(3)
+        master.show_frame(StartScript)
 
 
 # Tela das opções de cadastro de Horario

@@ -1,1 +1,2 @@
-python3 interface.py
+python3 ponto.py
+pause
