@@ -5,14 +5,10 @@ from Banco import Banco
 
 class User:
 
-    def __init__(self, email, password, coordernada_x, coordenada_y, coordenada_x_2, coordenada_y_2, __id__=0):
+    def __init__(self, email, password, __id__=0):
         self.__id = __id__
         self.__email = email
         self.__senha = password
-        self.__coord_x = coordernada_x
-        self.__coord_y = coordenada_y
-        self.__coord_x_2 = coordenada_x_2
-        self.__coord_y_2 = coordenada_y_2
 
     @staticmethod
     def validation():
@@ -42,10 +38,8 @@ class User:
 
                 __cursor__ = __banco__.get_banco.cursor()
 
-                __cursor__.execute("""insert into usuario (email, senha, x, y, x_2, y_2) values 
-                ('{}', '{}', '{}', '{}', '{}','{}')""".format
-                                   (self.__email, self.__senha, self.__coord_x, self.__coord_y,
-                                    self.__coord_x_2, self.__coord_y_2))
+                __cursor__.execute("""insert into usuario (email, senha) values 
+                ('{}', '{}')""".format(self.__email, self.__senha))
 
                 __banco__.get_banco.commit()
                 __banco__.get_banco.close()
@@ -85,21 +79,21 @@ class User:
                 dados = list(__cursor__.execute(f"SELECT * FROM usuario;"))[0]
                 dados = [dado for dado in dados if dado != 1]
                 __banco__.get_banco.close()
-                return dados[0], dados[1], {'x': dados[2], 'y': dados[3]}, {'x': dados[4], 'y': dados[5]}
+                return dados[0], dados[1]
             else:
                 return 'Nenhum dado cadastrado!'
         except:
             return 'Ocorreu um erro ao procurar o usuario!'
 
     @staticmethod
-    def update_user(email, password, x, y, x2, y2):
+    def update_user(email, password):
         __banco__ = Banco()
 
         try:
             __cursor__ = __banco__.get_banco.cursor()
             __cursor__.execute("""
-            UPDATE usuario SET (email, senha, x, y, x_2, y_2) = ({}, {}, {}, {}, {}, {});
-            """.format(email, password, x, y, x2, y2))
+            UPDATE usuario SET (email, senha) = ({}, {});
+            """.format(email, password))
             __banco__.get_banco.commit()
             __banco__.get_banco.close()
             return 'Alterações realizadas com Sucesso!'
@@ -107,7 +101,7 @@ class User:
             return 'Erro ao alterar o usuário!'
 
     def user_consult(self):
-        print(self.__email, self.__senha, self.__coord_x, self.__coord_y, self.__coord_x_2, self.__coord_y_2)
+        print(self.__email, self.__senha)
 
 
 class SchedulesMm:
